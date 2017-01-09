@@ -33,18 +33,17 @@ public class SearchView extends AppCompatActivity {
         previousDirectory.setText(previousPreviousDirectory);
         previousDirectory.setEnabled(false);
         dir = initialiseListView(directories,currentDirectory.getText().toString());
+        // Initialize the old directory
         oldDir = dir;
 
-        // Listener
+        // Listener for ItemClick of the ListView
         ListView.OnItemClickListener directoryOnItemClick = new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 // Initialize oldDirectory
-                if (!oldDir.getPath().equals(dir.getPath())) {
-                    oldDir.setChildDirectories(dir.getFolders());
-                    oldDir.setChildFiles(dir.getFiles());
-                    oldDir.setPath(dir.getPath());
-                }
+                oldDir.setChildDirectories(dir.getFolders());
+                oldDir.setChildFiles(dir.getFiles());
+                oldDir.setPath(dir.getPath());
 
                 String directoryName = (String)directories.getItemAtPosition(position);
 
@@ -68,12 +67,10 @@ public class SearchView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String directoryName = previousDirectory.getText().toString();
-                File tmpFolder = oldDir.findDirectory(directoryName);
-                previousDirectory.setText(previousPreviousDirectory);
-                currentDirectory.setText(directoryName);
 
                 if (!previousDirectory.getText().toString().equalsIgnoreCase("None")) {
-                    if (oldDir.getPath().equalsIgnoreCase(tmpFolder.getPath())) {
+                    File tmpFolder = oldDir.findDirectory(directoryName);
+                    if (tmpFolder != null) {
                         // Initialize listView with the oldParent
                         Directory dirTemp = initialiseListView(directories, oldDir.getPath());
                         // Initialize final variable directory
@@ -85,6 +82,8 @@ public class SearchView extends AppCompatActivity {
                     previousDirectory.setEnabled(false);
                 }
 
+                previousDirectory.setText(previousPreviousDirectory);
+                currentDirectory.setText(directoryName);
             }
         };
 
@@ -96,8 +95,10 @@ public class SearchView extends AppCompatActivity {
     private Directory initialiseListView(ListView p_list, String p_path) {
         Directory currentDirectory = getChildrenDirectory(p_path);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, currentDirectory.getItemNames());
+        //ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
+          //      android.R.id.text1, currentDirectory.getItemNames());
+        DirectoryArrayAdapter adapter = new DirectoryArrayAdapter (
+              this, R.layout.item_list, currentDirectory.getFolders());
         p_list.setAdapter(adapter);
 
         return currentDirectory;
