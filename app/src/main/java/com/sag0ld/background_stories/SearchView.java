@@ -1,13 +1,14 @@
 package com.sag0ld.background_stories;
 
-import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,30 +22,102 @@ public class SearchView extends AppCompatActivity {
 
         // Variable
         final ListView directories = (ListView) findViewById(R.id.ListDirectory);
+        final TextView currentDirectory = (TextView) findViewById(R.id.txtCurrentDirectory);
+        final Button previousDirectory = (Button) findViewById(R.id.btnPreviousDirectory);
+        final Directory dir;
+        final Directory oldDir;
+        final String previousPreviousDirectory = "None";
 
-
-        // List of directory
-        File folderSource = new File("/");
-        File[] folders = folderSource.listFiles();
-        ArrayList<String> folderNames = new ArrayList<>();
-        for (File inFile : folders) {
-            if (inFile.isDirectory()) {
-                folderNames.add(inFile.getName());
-            }
-        }
         // Initialize list
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, folderNames );
-        directories.setAdapter(adapter);
+        currentDirectory.setText(Environment.getRootDirectory().getAbsolutePath());
+        previousDirectory.setText(previousPreviousDirectory);
+        previousDirectory.setEnabled(false);
+        dir = initialiseListView(directories,currentDirectory.getText().toString());
+        oldDir = dir;
 
         // Listener
-        AdapterView.OnItemClickListener directoryonClick = new AdapterView.OnItemClickListener() {
+        ListView.OnItemClickListener directoryOnItemClick = new ListView.OnItemClickListener() {
+            @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                // Initialize oldDirectory
+                if (!oldDir.getPath().equals(dir.getPath())) {
+                    oldDir.setChildDirectories(dir.getFolders());
+                    oldDir.setChildFiles(dir.getFiles());
+                    oldDir.setPath(dir.getPath());
+                }
 
-                Object o = directories.getItemAtPosition(position);
+                String directoryName = (String)directories.getItemAtPosition(position);
+
+                // Change text of final variable
+                previousPreviousDirectory.replaceAll(".*", previousDirectory.getText().toString());
+
+                previousDirectory.setEnabled(true);
+                previousDirectory.setText(currentDirectory.getText());
+                currentDirectory.setText(directoryName);
+
+                // Initialize listView with the new parent
+                File folder = dir.findDirectory(directoryName);
+                Directory dirTemp = initialiseListView(directories, folder.getPath());
+                dir.setChildDirectories(dirTemp.getFolders());
+                dir.setChildFiles(dirTemp.getFiles());
+                dir.setPath(folder.getPath());
+            }
+        };
+
+        Button.OnClickListener previousOnClickListener = new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String directoryName = previousDirectory.getText().toString();
+                File tmpFolder = oldDir.findDirectory(directoryName);
+                previousDirectory.setText(previousPreviousDirectory);
+                currentDirectory.setText(directoryName);
+
+                if (!previousDirectory.getText().toString().equalsIgnoreCase("None")) {
+                    if (oldDir.getPath().equalsIgnoreCase(tmpFolder.getPath())) {
+                        // Initialize listView with the oldParent
+                        Directory dirTemp = initialiseListView(directories, oldDir.getPath());
+                        // Initialize final variable directory
+                        dir.setChildDirectories(dirTemp.getFolders());
+                        dir.setChildFiles(dirTemp.getFiles());
+                        dir.setPath(oldDir.getPath());
+                    }
+                } else {
+                    previousDirectory.setEnabled(false);
+                }
 
             }
         };
 
+        // Initialize Listener
+        directories.setOnItemClickListener(directoryOnItemClick);
+        previousDirectory.setOnClickListener(previousOnClickListener);
+    }
+
+    private Directory initialiseListView(ListView p_list, String p_path) {
+        Directory currentDirectory = getChildrenDirectory(p_path);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, currentDirectory.getItemNames());
+        p_list.setAdapter(adapter);
+
+        return currentDirectory;
+    }
+
+    private Directory getChildrenDirectory (String directoryPath) {
+        File folderSource = new File(directoryPath);
+
+        File[] folders = folderSource.listFiles();
+        ArrayList<File> foldersList = new ArrayList<>();
+        ArrayList<File> filesList = new ArrayList<>();
+        for (File inFile : folders) {
+            if (inFile.isDirectory()) {
+                foldersList.add(inFile);
+            }
+            else {
+                filesList.add(inFile);
+            }
+        }
+        Directory dir = new Directory(foldersList, filesList, directoryPath);
+        return dir;
     }
 }
