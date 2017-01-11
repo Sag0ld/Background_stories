@@ -57,7 +57,7 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
             type.setText(Dir);
             image.setImageResource(R.drawable.folder);
         } else {
-            String extension = item.getName().split(".")[1];
+            String extension = item.getName().split("\\.")[1];
             // If it's an image accepted or another file
             if(extension.equalsIgnoreCase(imgExtension.JPEG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.JPG.toString()) ||

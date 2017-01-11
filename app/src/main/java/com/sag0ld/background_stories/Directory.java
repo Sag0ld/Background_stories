@@ -27,30 +27,15 @@ public class Directory {
         return m_childFiles;
     }
 
-    public int getNbChild() {
-        return m_childFiles.size() + m_childDirectories.size();
-    }
-
     public String getPath() {
         return m_path;
     }
 
-    public File findDirectory(String p_name) {
-        File fina = null;
-        for(File f : m_childDirectories) {
-            if(f.getName().equals(p_name))
-                fina = f;
-        }
-        return fina;
-    }
-
-    public ArrayList<String> getItemNames () {
-        ArrayList<String> names = new ArrayList<String>();
-        for(File folder : m_childDirectories)
-            names.add(folder.getName());
-        for(File folder : m_childFiles)
-            names.add(folder.getName());
-        return names;
+    public ArrayList<File> getAllChildren() {
+        ArrayList<File> allChildren = new ArrayList<>();
+        allChildren.addAll(m_childDirectories);
+        allChildren.addAll(m_childFiles);
+        return allChildren;
     }
 
     public void setChildDirectories (ArrayList<File> p_directories) {

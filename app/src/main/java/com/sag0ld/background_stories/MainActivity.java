@@ -15,7 +15,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // Variable
         Button buttonFindFolder = (Button) findViewById(R.id.buttonFindFolder);
-        EditText path = (EditText) findViewById(R.id.pathFolder);
+        EditText editPath = (EditText) findViewById(R.id.pathFolder);
+
+        if(getIntent().hasExtra("path")){
+            editPath.setText(getIntent().getStringExtra("path"));
+        }
 
         // Listener
         View.OnClickListener findFolderListener = new View.OnClickListener() {
@@ -25,6 +29,5 @@ public class MainActivity extends AppCompatActivity {
         };
 
         buttonFindFolder.setOnClickListener(findFolderListener);
-
     }
 }
