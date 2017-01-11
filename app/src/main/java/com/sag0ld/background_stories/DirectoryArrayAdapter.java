@@ -25,7 +25,7 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
     private List<File> rentalProperties;
     final private String Dir = "Dir";
     final private String Files = "File";
-    private enum imgExtension { JPG, PNG, JPEG};
+    public enum imgExtension { JPG, PNG, JPEG};
 
     //constructor, call on creation
     public DirectoryArrayAdapter (Context context, int resource, ArrayList<File> objects) {

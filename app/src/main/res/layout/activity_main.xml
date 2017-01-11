@@ -17,7 +17,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Dossier :"
+            android:text="Path:"
             android:layout_height="wrap_content"
             android:id="@+id/textViewDossier"
             android:layout_width="wrap_content"
@@ -27,11 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text|textPersonName"
-            android:text="/DCIM/Camera"
             android:ems="10"
             android:id="@+id/pathFolder"
             android:layout_weight="1"
-            android:singleLine="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             style="@style/Widget.AppCompat.EditText" />
 
@@ -46,14 +44,10 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <Button
+        android:text="Done"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDone" />
 
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/ListDirectory" />
-    </LinearLayout>
 </LinearLayout>
