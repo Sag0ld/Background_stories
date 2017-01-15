@@ -153,6 +153,7 @@ public class SearchView extends Activity {
         return currentDirectory;
     }
 
+    // Create a Directory object that contain all file and subFolder  (Not recursif)
     private Directory getChildrenDirectory (String directoryPath) {
         File folderSource = new File(directoryPath);
 

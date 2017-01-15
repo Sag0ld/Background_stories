@@ -31,6 +31,7 @@ public class Directory {
         return m_path;
     }
 
+    // Return a Array containing subsolfer and file
     public ArrayList<File> getAllChildren() {
         ArrayList<File> allChildren = new ArrayList<>();
         allChildren.addAll(m_childDirectories);

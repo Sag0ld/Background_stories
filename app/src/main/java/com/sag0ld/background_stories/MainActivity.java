@@ -1,15 +1,14 @@
 package com.sag0ld.background_stories;
 
 import android.app.Activity;
-import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.app.WallpaperManager;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -30,16 +29,19 @@ import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
+    // Constant
+    private String PREFERENCE_FILE_NAME = "PreferenceSetting";
+
     // Variable
     public enum BrowseType {Picture, Folder};
     private Button buttonFindFolder;
-    private EditText editPath;
+    private EditText editPathFolder;
     private Button btnBrowsePicture;
     private EditText editPathPicture;
     private Button btnDone;
-    private String pathFolder = "";
-    private String pathPicture = "";
+    private String pictureFound = "";
     private ProgressBar spinner;
+    private SharedPreferences settings;
 
 
     @Override
@@ -49,12 +51,18 @@ public class MainActivity extends Activity {
 
         // Initialize interface
         buttonFindFolder = (Button) findViewById(R.id.buttonFindFolder);
-        editPath = (EditText) findViewById(R.id.pathFolder);
+        editPathFolder = (EditText) findViewById(R.id.pathFolder);
         btnBrowsePicture = (Button) findViewById(R.id.btnBrowsePicture);
         editPathPicture = (EditText) findViewById(R.id.pathDefaultWallpaper);
         btnDone = (Button) findViewById(R.id.btnDone);
         spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
+
+        // If preferrenceSetting exist, restore them else its going to be created
+        settings = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
+        editPathFolder.setText(settings.getString("PathFolder", ""));
+        editPathPicture.setText(settings.getString("PathDefaultPicture", ""));
+
 
         // Listener
         View.OnClickListener findFolderListener = new View.OnClickListener() {
@@ -73,54 +81,55 @@ public class MainActivity extends Activity {
             }
         };
 
-        final Button.OnClickListener btnDoneOnClick = new Button.OnClickListener(){
-
+        final Button.OnClickListener btnDoneOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new FindWallpaper().execute(pathFolder);
+                new FindWallpaper().execute(editPathFolder.getText().toString());
                 spinner.setVisibility(View.GONE);
                 btnDone.setEnabled(true);
-                Toast bread = Toast.makeText(getApplicationContext(), "Done!", Toast.LENGTH_LONG);
-                bread.show();
+                Toast message = Toast.makeText(getApplicationContext(), "Done!", Toast.LENGTH_LONG);
+                message.show();
             }
         };
+
         // Initialize action
         buttonFindFolder.setOnClickListener(findFolderListener);
         btnBrowsePicture.setOnClickListener(browsePictureListener);
         btnDone.setOnClickListener(btnDoneOnClick);
 
+        // TODO
+        // Finf a way to put a listener on the clock and run this methode only at this time
+        // showNotification();
+    }
+
+    private void showNotification () {
         // Notification
-        NotificationCompat.Builder mBuilder =
+        NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.folder)
                         .setContentTitle("New Wallpaper found!")
-                        .setContentText("We find a new match!");
+                        .setContentText("We find a new match!")
+                        .setAutoCancel(true);
 
-        // Creates an explicit intent for an Activity in your app
-        WallpaperManager myWallpaperManager
+        // Set the new image to Crop and set to background
+        WallpaperManager wallpaperManager
                 = WallpaperManager.getInstance(getApplicationContext());
-        File wallpaperFile = new File("/storage/emulated/0/Pictures/Messenger/received_1330987716952430.jpeg");
-        Uri contentURI = getImageContentUri(this, wallpaperFile.getAbsolutePath());
-        Intent intent = myWallpaperManager.getCropAndSetWallpaperIntent(contentURI);
+        File wallpaperFile = new File(pictureFound);
 
+        // Get the content Uri to set into the intent
+        Uri contentURI = getImageContentUri(this, wallpaperFile.getAbsolutePath());
+        Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
+
+        // Set the intent to the notification Click
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(resultPendingIntent);
 
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
+        NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
-        mNotificationManager.notify(0, mBuilder.build());
 
-       /* AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 00);
-        calendar.set(Calendar.SECOND, 00);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 ,
-        resultPendingIntent);  //set repeating every 24 hours*/
+        // Show the notification
+        notificationManager.notify(Notification.PRIORITY_DEFAULT, notificationBuilder.build());
     }
 
     // http://stackoverflow.com/questions/23207604/get-a-content-uri-from-a-file-uri
@@ -145,12 +154,13 @@ public class MainActivity extends Activity {
             return null;
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (pathFolder != "")
+        if (!editPathFolder.getText().toString().equals(""))
             editPath.setText(pathFolder);
-        if (pathPicture != "")
+        if (!pathPicture.equals(""))
             editPathPicture.setText(pathPicture);
     }
 
@@ -162,6 +172,9 @@ public class MainActivity extends Activity {
                 // Update the current path of the folder choosen
                 if (resultCode == Activity.RESULT_OK) {
                     pathFolder = data.getStringExtra("pathFolder");
+                    SharedPreferences.Editor settingsEditor  = settings.edit();
+                    settingsEditor.putString("PathFolder", pathFolder);
+                    settingsEditor.apply();
                 }
                 break;
             }
@@ -169,12 +182,14 @@ public class MainActivity extends Activity {
                 // Update the current path of the picture choosen
                 if (resultCode == Activity.RESULT_OK) {
                     pathPicture = data.getStringExtra("pathPicture");
+                    SharedPreferences.Editor settingsEditor  = settings.edit();
+                    settingsEditor.putString("PathDefaultPicture", pathPicture);
+                    settingsEditor.apply();
                 }
                 break;
             }
         }
     }
-
 
     private class FindWallpaper extends AsyncTask<String, Integer, Bitmap> {
         @Override
@@ -185,7 +200,7 @@ public class MainActivity extends Activity {
             int month = c.get(Calendar.MONTH);
 
             // Get the first file corresponding with the current date
-            File directoryChoosen = new File(params[0].toString());
+            File directoryChoosen = new File(params[0]);
             for (File f : directoryChoosen.listFiles()) {
                 c.setTimeInMillis(f.lastModified());
                 int fileDay = c.get(Calendar.DAY_OF_MONTH);
@@ -200,7 +215,6 @@ public class MainActivity extends Activity {
                              return MediaStore.Images.Media.getBitmap(getContentResolver(),
                                     android.net.Uri.parse(f.toURI().toString()));
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -225,18 +239,16 @@ public class MainActivity extends Activity {
                 try {
                     myWallpaperManager.setBitmap(result);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else {
                 // Set a wallpaper by default
                 try {
-                    File defaultPicture = new File(pathPicture);
+                    File defaultPicture = new File(editPathPicture.getText().toString());
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
                             android.net.Uri.parse(defaultPicture.toURI().toString()));
                     myWallpaperManager.setBitmap(bitmap);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

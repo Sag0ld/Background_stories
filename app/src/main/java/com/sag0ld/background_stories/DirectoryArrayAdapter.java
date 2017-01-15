@@ -23,9 +23,8 @@ import java.util.List;
 public class DirectoryArrayAdapter extends ArrayAdapter<File> {
     private Context context;
     private List<File> rentalProperties;
-    final private String Dir = "Dir";
-    final private String Files = "File";
-    public enum imgExtension { JPG, PNG, JPEG};
+    public enum fileType {Dir, File}
+    public enum imgExtension { JPG, PNG, JPEG}
 
     //constructor, call on creation
     public DirectoryArrayAdapter (Context context, int resource, ArrayList<File> objects) {
@@ -52,9 +51,10 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
 
         path.setText(item.getPath());
         name.setText(item.getName());
+
         //Initilize type and imageView
         if(item.isDirectory()) {
-            type.setText(Dir);
+            type.setText(fileType.Dir.name());
             image.setImageResource(R.drawable.folder);
         } else {
             String extension = item.getName().split("\\.")[1];
@@ -67,7 +67,7 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
             } else {
                 image.setImageResource(R.drawable.unknownfile);
             }
-            type.setText(Files);
+            type.setText(fileType.File.name());
         }
         return view;
     }
