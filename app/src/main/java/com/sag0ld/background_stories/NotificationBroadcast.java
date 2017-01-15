@@ -16,8 +16,6 @@ import android.support.v4.app.NotificationCompat;
 
 import java.io.File;
 
-import static com.sag0ld.background_stories.MainActivity.*;
-
 /**
  * Created by Sagold on 2017-01-15.
  */
@@ -32,8 +30,8 @@ public class NotificationBroadcast extends BroadcastReceiver {
         m_context = context;
         SharedPreferences settings = context.getSharedPreferences(PREFERENCE_FILE_NAME,
                 Context.MODE_PRIVATE);
-        MainActivity.FindWallpaper.execute(settings.getString("PathFolder", ""));
-        showNotification();
+        new MainActivity.FindWallpaper().execute(settings.getString("PathFolder", ""));
+        showNotification(settings.getString("PathPicture", ""));
 
     }
 
@@ -65,28 +63,5 @@ public class NotificationBroadcast extends BroadcastReceiver {
 
         // Show the notification
         notificationManager.notify(Notification.PRIORITY_DEFAULT, notificationBuilder.build());
-    }
-
-    // http://stackoverflow.com/questions/23207604/get-a-content-uri-from-a-file-uri
-    public Uri getImageContentUri(Context context, String absPath) {
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                , new String[]{MediaStore.Images.Media._ID}
-                , MediaStore.Images.Media.DATA + "=? "
-                , new String[]{absPath}, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            cursor.close();
-            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.toString(id));
-
-        } else if (!absPath.isEmpty()) {
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DATA, absPath);
-            return context.getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        } else {
-            return null;
-        }
     }
 }

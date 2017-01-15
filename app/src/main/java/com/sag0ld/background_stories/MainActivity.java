@@ -1,36 +1,19 @@
 package com.sag0ld.background_stories;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.WallpaperManager;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
 
 public class MainActivity extends Activity {
 
     // Constant
-    final public String PREFERENCE_FILE_NAME = "PreferenceSetting";
+    public static final String PREFERENCE_FILE_NAME = "PreferenceSetting";
 
     // Variable
     public enum BrowseType {Picture, Folder}
@@ -81,7 +64,7 @@ public class MainActivity extends Activity {
         final Button.OnClickListener btnDoneOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new FindWallpaper().execute(editPathFolder.getText().toString());
+                new WallpaperFinder(getApplicationContext()).execute(editPathFolder.getText().toString());
                 spinner.setVisibility(View.GONE);
                 btnDone.setEnabled(true);
                 Toast message = Toast.makeText(getApplicationContext(), "Done!", Toast.LENGTH_LONG);
@@ -128,70 +111,6 @@ public class MainActivity extends Activity {
                     settingsEditor.apply();
                 }
                 break;
-            }
-        }
-    }
-
-    public class FindWallpaper extends AsyncTask<String, Integer, Bitmap> {
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            // Get the current date
-            Calendar c = Calendar.getInstance();
-            int day = c.get(Calendar.DAY_OF_MONTH);
-            int month = c.get(Calendar.MONTH);
-
-            // Get the first file corresponding with the current date
-            File directoryChoosen = new File(params[0]);
-            for (File f : directoryChoosen.listFiles()) {
-                c.setTimeInMillis(f.lastModified());
-                int fileDay = c.get(Calendar.DAY_OF_MONTH);
-                int fileMonth = c.get(Calendar.MONTH);
-                if (f.isFile()) {
-                    String extension = f.getName().split("\\.")[1];
-                    if (day == fileDay && month == fileMonth &&
-                       (extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPEG.toString())||
-                        extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPG.toString()) ||
-                        extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.PNG.toString()))) {
-                        try {
-                             return MediaStore.Images.Media.getBitmap(getContentResolver(),
-                                    android.net.Uri.parse(f.toURI().toString()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            spinner.setProgress(progress[0]);
-        }
-        @Override
-        protected void onPreExecute() {
-            spinner.setVisibility(Spinner.VISIBLE);
-            btnDone.setEnabled(false);
-        }
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            WallpaperManager myWallpaperManager
-                    = WallpaperManager.getInstance(getApplicationContext());
-            if (result != null) {
-                try {
-                    myWallpaperManager.setBitmap(result);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Set a wallpaper by default
-                try {
-                    File defaultPicture = new File(editPathPicture.getText().toString());
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
-                            android.net.Uri.parse(defaultPicture.toURI().toString()));
-                    myWallpaperManager.setBitmap(bitmap);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
