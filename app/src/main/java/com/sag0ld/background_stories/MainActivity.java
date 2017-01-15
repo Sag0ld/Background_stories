@@ -30,7 +30,7 @@ import java.util.Calendar;
 public class MainActivity extends Activity {
 
     // Constant
-    private String PREFERENCE_FILE_NAME = "PreferenceSetting";
+    final public String PREFERENCE_FILE_NAME = "PreferenceSetting";
 
     // Variable
     public enum BrowseType {Picture, Folder}
@@ -39,7 +39,6 @@ public class MainActivity extends Activity {
     private Button btnDone;
     private ProgressBar spinner;
     private SharedPreferences settings;
-    private String pictureFound = "";
 
 
     @Override
@@ -100,59 +99,6 @@ public class MainActivity extends Activity {
         // showNotification();
     }
 
-    private void showNotification () {
-        // Notification
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.folder)
-                        .setContentTitle("New Wallpaper found!")
-                        .setContentText("We find a new match!")
-                        .setAutoCancel(true);
-
-        // Set the new image to Crop and set to background
-        WallpaperManager wallpaperManager
-                = WallpaperManager.getInstance(getApplicationContext());
-        File wallpaperFile = new File(pictureFound);
-
-        // Get the content Uri to set into the intent
-        Uri contentURI = getImageContentUri(this, wallpaperFile.getAbsolutePath());
-        Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
-
-        // Set the intent to the notification Click
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Show the notification
-        notificationManager.notify(Notification.PRIORITY_DEFAULT, notificationBuilder.build());
-    }
-
-    // http://stackoverflow.com/questions/23207604/get-a-content-uri-from-a-file-uri
-    public Uri getImageContentUri(Context context, String absPath) {
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                , new String[]{MediaStore.Images.Media._ID}
-                , MediaStore.Images.Media.DATA + "=? "
-                , new String[]{absPath}, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            cursor.close();
-            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.toString(id));
-
-        } else if (!absPath.isEmpty()) {
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DATA, absPath);
-            return context.getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -186,7 +132,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class FindWallpaper extends AsyncTask<String, Integer, Bitmap> {
+    public class FindWallpaper extends AsyncTask<String, Integer, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... params) {
             // Get the current date
