@@ -33,15 +33,13 @@ public class MainActivity extends Activity {
     private String PREFERENCE_FILE_NAME = "PreferenceSetting";
 
     // Variable
-    public enum BrowseType {Picture, Folder};
-    private Button buttonFindFolder;
+    public enum BrowseType {Picture, Folder}
     private EditText editPathFolder;
-    private Button btnBrowsePicture;
     private EditText editPathPicture;
     private Button btnDone;
-    private String pictureFound = "";
     private ProgressBar spinner;
     private SharedPreferences settings;
+    private String pictureFound = "";
 
 
     @Override
@@ -50,9 +48,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // Initialize interface
-        buttonFindFolder = (Button) findViewById(R.id.buttonFindFolder);
+        Button buttonFindFolder = (Button) findViewById(R.id.buttonFindFolder);
+        Button btnBrowsePicture = (Button) findViewById(R.id.btnBrowsePicture);
         editPathFolder = (EditText) findViewById(R.id.pathFolder);
-        btnBrowsePicture = (Button) findViewById(R.id.btnBrowsePicture);
         editPathPicture = (EditText) findViewById(R.id.pathDefaultWallpaper);
         btnDone = (Button) findViewById(R.id.btnDone);
         spinner = (ProgressBar)findViewById(R.id.progressBar);
@@ -158,10 +156,9 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!editPathFolder.getText().toString().equals(""))
-            editPath.setText(pathFolder);
-        if (!pathPicture.equals(""))
-            editPathPicture.setText(pathPicture);
+        SharedPreferences preferences  = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
+            editPathFolder.setText(preferences.getString("PathFolder", ""));
+            editPathPicture.setText(preferences.getString("PathDefaultPicture", ""));
     }
 
     @Override
@@ -171,9 +168,8 @@ public class MainActivity extends Activity {
             case (0) : {
                 // Update the current path of the folder choosen
                 if (resultCode == Activity.RESULT_OK) {
-                    pathFolder = data.getStringExtra("pathFolder");
                     SharedPreferences.Editor settingsEditor  = settings.edit();
-                    settingsEditor.putString("PathFolder", pathFolder);
+                    settingsEditor.putString("PathFolder", data.getStringExtra("pathFolder"));
                     settingsEditor.apply();
                 }
                 break;
@@ -181,9 +177,8 @@ public class MainActivity extends Activity {
             case (1) : {
                 // Update the current path of the picture choosen
                 if (resultCode == Activity.RESULT_OK) {
-                    pathPicture = data.getStringExtra("pathPicture");
                     SharedPreferences.Editor settingsEditor  = settings.edit();
-                    settingsEditor.putString("PathDefaultPicture", pathPicture);
+                    settingsEditor.putString("PathDefaultPicture", data.getStringExtra("pathPicture"));
                     settingsEditor.apply();
                 }
                 break;
