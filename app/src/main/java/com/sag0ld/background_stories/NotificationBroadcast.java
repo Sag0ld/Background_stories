@@ -5,13 +5,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 
 import java.io.File;
@@ -30,9 +27,8 @@ public class NotificationBroadcast extends BroadcastReceiver {
         m_context = context;
         SharedPreferences settings = context.getSharedPreferences(PREFERENCE_FILE_NAME,
                 Context.MODE_PRIVATE);
-        new MainActivity.FindWallpaper().execute(settings.getString("PathFolder", ""));
+        new WallpaperFinder(context).execute(settings.getString("PathFolder", ""));
         showNotification(settings.getString("PathPicture", ""));
-
     }
 
     private void showNotification (String p_pathPictureFound) {
@@ -50,7 +46,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
         File wallpaperFile = new File(p_pathPictureFound);
 
         // Get the content Uri to set into the intent
-        Uri contentURI = getImageContentUri(m_context, wallpaperFile.getAbsolutePath());
+        Uri contentURI = WallpaperFinder.getImageContentUri(m_context, wallpaperFile.getAbsolutePath());
         Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
 
         // Set the intent to the notification Click

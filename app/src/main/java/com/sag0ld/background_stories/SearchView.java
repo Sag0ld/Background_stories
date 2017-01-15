@@ -103,7 +103,8 @@ public class SearchView extends Activity {
                 String[] pathElements = dir.getPath().split("/");
                 StringBuilder previousPath = new StringBuilder() ;
                 for( int i = 0 ; i <= pathElements.length - 2; i++) {
-                    previousPath.append(pathElements[i] + "/");
+                    previousPath.append(pathElements[i]);
+                    previousPath.append("/");
                 }
 
                 // update the interface
@@ -168,7 +169,6 @@ public class SearchView extends Activity {
                 filesList.add(inFile);
             }
         }
-        Directory dir = new Directory(foldersList, filesList, directoryPath);
-        return dir;
+        return new Directory(foldersList, filesList, directoryPath);
     }
 }

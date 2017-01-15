@@ -72,7 +72,7 @@ public class WallpaperFinder extends AsyncTask<String, Integer, String> {
     }
 
     // http://stackoverflow.com/questions/23207604/get-a-content-uri-from-a-file-uri
-    public Uri getImageContentUri(Context context, String absPath) {
+    public static Uri getImageContentUri(Context context, String absPath) {
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 , new String[]{MediaStore.Images.Media._ID}

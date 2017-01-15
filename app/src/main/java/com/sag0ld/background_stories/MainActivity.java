@@ -1,6 +1,10 @@
 package com.sag0ld.background_stories;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import java.util.Calendar;
+
+import static android.app.AlarmManager.RTC_WAKEUP;
 
 public class MainActivity extends Activity {
 
@@ -77,9 +85,21 @@ public class MainActivity extends Activity {
         btnBrowsePicture.setOnClickListener(browsePictureListener);
         btnDone.setOnClickListener(btnDoneOnClick);
 
-        // TODO
-        // Finf a way to put a listener on the clock and run this methode only at this time
-        // showNotification();
+        //Initialize the Alarm for the recurency to find a new wallpaper
+        AlarmManager alarmManager;
+        PendingIntent alarmIntent;
+        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationBroadcast.class);
+        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        // Set the alarm to start at approximately 2:00 p.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+        // With setInexactRepeating(), you have to use one of the AlarmManager interval
+        // constants--in this case, AlarmManager.INTERVAL_DAY.
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
     @Override
