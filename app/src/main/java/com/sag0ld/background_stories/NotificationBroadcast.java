@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -19,16 +20,20 @@ import java.io.File;
 
 public class NotificationBroadcast extends BroadcastReceiver {
 
-    // Constant
-    final private String PREFERENCE_FILE_NAME = "PreferenceSetting";
     private Context m_context;
     @Override
     public void onReceive(Context context, Intent intent) {
+        Toast.makeText(context,"Work",Toast.LENGTH_LONG).show();
         m_context = context;
-        SharedPreferences settings = context.getSharedPreferences(PREFERENCE_FILE_NAME,
-                Context.MODE_PRIVATE);
+        SharedPreferences settings = context.getSharedPreferences(MainActivity.PREFERENCE_FILE_NAME,
+        Context.MODE_PRIVATE);
         new WallpaperFinder(context).execute(settings.getString("PathFolder", ""));
-        showNotification(settings.getString("PathPicture", ""));
+
+        String pathPicture = settings.getString("PathPictureFound" , "");
+
+        // if no picture found, don't push a notification
+        if (!pathPicture.equals(""))
+            showNotification(settings.getString("PathPictureFound", ""));
     }
 
     private void showNotification (String p_pathPictureFound) {

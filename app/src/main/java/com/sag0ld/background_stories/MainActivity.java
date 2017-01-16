@@ -2,21 +2,18 @@ package com.sag0ld.background_stories;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.Context;
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import java.util.Calendar;
-
-import static android.app.AlarmManager.RTC_WAKEUP;
 
 public class MainActivity extends Activity {
 
@@ -27,8 +24,6 @@ public class MainActivity extends Activity {
     public enum BrowseType {Picture, Folder}
     private EditText editPathFolder;
     private EditText editPathPicture;
-    private Button btnDone;
-    private ProgressBar spinner;
     private SharedPreferences settings;
 
 
@@ -42,8 +37,8 @@ public class MainActivity extends Activity {
         Button btnBrowsePicture = (Button) findViewById(R.id.btnBrowsePicture);
         editPathFolder = (EditText) findViewById(R.id.pathFolder);
         editPathPicture = (EditText) findViewById(R.id.pathDefaultWallpaper);
-        btnDone = (Button) findViewById(R.id.btnDone);
-        spinner = (ProgressBar)findViewById(R.id.progressBar);
+        Button btnDone = (Button) findViewById(R.id.btnDone);
+        ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
         spinner.setVisibility(View.GONE);
 
         // If preferrenceSetting exist, restore them else its going to be created
@@ -73,10 +68,25 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 new WallpaperFinder(getApplicationContext()).execute(editPathFolder.getText().toString());
-                spinner.setVisibility(View.GONE);
-                btnDone.setEnabled(true);
                 Toast message = Toast.makeText(getApplicationContext(), "Done!", Toast.LENGTH_LONG);
                 message.show();
+
+                // Get the path of the new wallpaper
+                WallpaperManager wallpaperManager =
+                        WallpaperManager.getInstance(getApplicationContext());
+                Uri nextWallpaperUri;
+                String pathPictureFound = settings.getString("PathPictureFound", "");
+                if (!pathPictureFound.equalsIgnoreCase("")) {
+                    nextWallpaperUri = WallpaperFinder.getImageContentUri(getApplicationContext(),
+                                    pathPictureFound);
+                } else {
+                    nextWallpaperUri = WallpaperFinder.getImageContentUri(getApplicationContext(),
+                                    settings.getString("PathDefaultPicture", ""));
+                }
+
+                // Set the new wallpaper
+                Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(nextWallpaperUri);
+                startActivity(intent);
             }
         };
 
@@ -86,19 +96,17 @@ public class MainActivity extends Activity {
         btnDone.setOnClickListener(btnDoneOnClick);
 
         //Initialize the Alarm for the recurency to find a new wallpaper
-        AlarmManager alarmManager;
-        PendingIntent alarmIntent;
-        alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         Intent intent = new Intent(this, NotificationBroadcast.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        // Set the alarm to start at approximately 2:00 p.m.
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        // Set the alarm to start at midnight
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        calendar.set(Calendar.MINUTE, 0);
 
-        // With setInexactRepeating(), you have to use one of the AlarmManager interval
-        // constants--in this case, AlarmManager.INTERVAL_DAY.
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
