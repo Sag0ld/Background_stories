@@ -5,7 +5,8 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sag0ld.background_stories.MainActivity">
+    tools:context="com.sag0ld.background_stories.MainActivity"
+    android:background="@color/backgroundColor">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -20,23 +21,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/btnPreviousDirectory"
             android:textSize="12sp"
-            style="@style/Widget.AppCompat.Button.Small" />
+            style="@style/Widget.AppCompat.Button.Small"
+            android:backgroundTint="@color/colorButton" />
 
         <TextView
             android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/txtCurrentDirectory"
             android:layout_weight="1"
             android:textSize="18sp"
             android:layout_marginLeft="5dp"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorLineEditText"
+            android:gravity="center_vertical" />
 
         <Button
             android:text="Choose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnChoose" />
+            android:id="@+id/btnChoose"
+            android:backgroundTint="@color/colorButton" />
 
     </LinearLayout>
 

@@ -11,25 +11,39 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@color/backgroundColor">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/background_stories"
+        android:id="@+id/imageView3"
+        android:background="@drawable/background_stories"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp" />
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <TableRow>
+
+            <TextView
+                android:text="Choose your picture directory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:textColor="@color/colorTitle"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp" />
+        </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-
-            <TextView
-                android:text="Path:"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/textViewDossier"
-                android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -37,16 +51,33 @@
                 android:inputType="text"
                 android:ems="10"
                 android:id="@+id/pathFolder"
-                android:layout_weight="1"
+                android:backgroundTint="@color/colorLineEditText"
+                android:textCursorDrawable="@null"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                style="@style/Widget.AppCompat.EditText" />
+                style="@style/Widget.AppCompat.EditText"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:textSize="18sp" />
 
             <Button
-                android:text="Browse folder"
+                android:text="Browse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonFindFolder"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:backgroundTint="@color/colorButton" />
+        </TableRow>
+        <TableRow>
+
+            <TextView
+                android:text="Choose your default background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView2"
+                android:textSize="20sp"
+                android:textColor="@color/colorTitle"
+                android:layout_marginTop="30sp" />
         </TableRow>
 
         <TableRow
@@ -54,45 +85,50 @@
             android:layout_height="match_parent"
             android:orientation="horizontal" >
 
-            <TextView
-                android:text="Default walpaper :"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView"
-                android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:layout_gravity="center_vertical" />
-
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:ems="10"
                 android:id="@+id/pathDefaultWallpaper"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:textCursorDrawable="@null"
+                android:backgroundTint="@color/colorLineEditText"
+                android:enabled="false" />
 
             <Button
-                android:text="Browse picture"
+                android:text="Browse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnBrowsePicture"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:backgroundTint="@color/colorButton"
+                style="?attr/buttonStyle" />
         </TableRow>
 
     </TableLayout>
 
     <Button
-        android:text="Done"
+        android:text="Set my wallpaper"
+        android:layout_width="match_parent"
+        android:id="@+id/btnDone"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20sp"
+        style="?attr/buttonStyle"
+        android:backgroundTint="@color/colorButton"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_height="match_parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="30sp" />
+
+    <Button
+        android:text="Browse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnDone" />
-
-    <ProgressBar
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="273dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.14" />
+        android:id="@+id/button13"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:backgroundTint="@color/colorButton"
+        style="?attr/buttonStyle" />
 
 </LinearLayout>

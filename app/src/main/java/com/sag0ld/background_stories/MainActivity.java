@@ -38,8 +38,6 @@ public class MainActivity extends Activity {
         editPathFolder = (EditText) findViewById(R.id.pathFolder);
         editPathPicture = (EditText) findViewById(R.id.pathDefaultWallpaper);
         Button btnDone = (Button) findViewById(R.id.btnDone);
-        ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
-        spinner.setVisibility(View.GONE);
 
         // If preferrenceSetting exist, restore them else its going to be created
         settings = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);

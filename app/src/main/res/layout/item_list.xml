@@ -39,7 +39,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtItemName"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="normal|bold"
+            android:textColor="@color/colorTextListView" />
 
     </LinearLayout>
 </LinearLayout>
