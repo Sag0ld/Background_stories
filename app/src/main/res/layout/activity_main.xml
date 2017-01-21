@@ -15,14 +15,14 @@
     android:background="@color/backgroundColor">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/background_stories"
+        android:layout_width="111dp"
+        android:layout_height="142dp"
         android:id="@+id/imageView3"
-        android:background="@drawable/background_stories"
+        android:background="@drawable/story_teller"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:tintMode="multiply" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonFindFolder"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:backgroundTint="@color/colorButton" />
+                android:background="@drawable/rounded_button"/>
         </TableRow>
         <TableRow>
 
@@ -103,8 +103,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnBrowsePicture"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:backgroundTint="@color/colorButton"
-                style="?attr/buttonStyle" />
+                android:background="@drawable/rounded_button" />
         </TableRow>
 
     </TableLayout>
@@ -115,12 +114,11 @@
         android:id="@+id/btnDone"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="20sp"
-        style="?attr/buttonStyle"
-        android:backgroundTint="@color/colorButton"
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_height="match_parent"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:background="@drawable/rounded_button"/>
 
     <Button
         android:text="Browse"

@@ -9,7 +9,7 @@
     <application
         android:theme="@style/Theme.Design.Light"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/story_teller"
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity android:name=".MainActivity">

@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Background Stories</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">StoryTeller</string>
+    <string name="font_awesome_folder">&#xf07b;</string>
+    <string name="font_awesome_file">&#xf15b;</string>
 </resources>

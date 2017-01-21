@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.media.ThumbnailUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,31 +42,41 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
         File item = rentalProperties.get(position);
 
         //get the inflater and inflate the XML layout for each item
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService
+                                                    (Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_list, null);
 
         TextView path = (TextView) view.findViewById(R.id.txtPath);
         TextView name = (TextView) view.findViewById(R.id.txtItemName);
-        ImageView image = (ImageView) view.findViewById(R.id.imageView);
+        TextView fontAwesomeIcon = (TextView) view.findViewById(R.id.fontAwesomeIconTextView);
         TextView type = (TextView) view.findViewById(R.id.txtType);
+        ImageView imageAccepted = (ImageView) view.findViewById(R.id.imageThumbnail);
 
+        Typeface fontAwesomeFont = Typeface.createFromAsset(context.getAssets(),
+                                    "fonts/fontawesome-webfont.ttf");
+        fontAwesomeIcon.setTypeface(fontAwesomeFont);
         path.setText(item.getPath());
         name.setText(item.getName());
 
         //Initilize type and imageView
         if(item.isDirectory()) {
             type.setText(fileType.Dir.name());
-            image.setImageResource(R.drawable.folder);
+            fontAwesomeIcon.setText(R.string.font_awesome_folder);
+            imageAccepted.setVisibility(ImageView.GONE);
         } else {
-            String extension = item.getName().split("\\.")[1];
+            String[] separeteditems = item.getName().split("\\.");
+            String extension  = separeteditems[separeteditems.length - 1];
             // If it's an image accepted or another file
             if(extension.equalsIgnoreCase(imgExtension.JPEG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.JPG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.PNG.toString())) {
-                Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getPath()),50,50);
-                image.setImageBitmap(bitmap);
+                Bitmap bitmap = ThumbnailUtils.extractThumbnail
+                        (BitmapFactory.decodeFile(item.getPath()),50,50);
+                imageAccepted.setImageBitmap(bitmap);
+                fontAwesomeIcon.setVisibility(TextView.GONE);
             } else {
-                image.setImageResource(R.drawable.unknownfile);
+                fontAwesomeIcon.setText(R.string.font_awesome_file);
+                imageAccepted.setVisibility(ImageView.GONE);
             }
             type.setText(fileType.File.name());
         }
