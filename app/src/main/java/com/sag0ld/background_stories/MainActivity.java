@@ -6,14 +6,14 @@ import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends Activity {
 
@@ -72,19 +72,25 @@ public class MainActivity extends Activity {
                 // Get the path of the new wallpaper
                 WallpaperManager wallpaperManager =
                         WallpaperManager.getInstance(getApplicationContext());
-                Uri nextWallpaperUri;
-                String pathPictureFound = settings.getString("PathPictureFound", "");
-                if (!pathPictureFound.equalsIgnoreCase("")) {
-                    nextWallpaperUri = WallpaperFinder.getImageContentUri(getApplicationContext(),
-                                    pathPictureFound);
+                Set<String> pathsPictureFound = settings.getStringSet("PathPictureFound", new HashSet<String>());
+                if (pathsPictureFound.size() == 1) {
+                    // Set the new wallpaper
+                    Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(
+                            WallpaperFinder.getImageContentUri(getApplicationContext(),
+                            pathsPictureFound.iterator().next()));
+                    startActivity(intent);
+                } else if (pathsPictureFound.size() > 1) {
+                    Intent intent = new Intent(MainActivity.this, WallpaperChooser.class);
+                    startActivity(intent);
                 } else {
-                    nextWallpaperUri = WallpaperFinder.getImageContentUri(getApplicationContext(),
-                                    settings.getString("PathDefaultPicture", ""));
+                    // Set the new wallpaper
+                    Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(
+                            WallpaperFinder.getImageContentUri(getApplicationContext(),
+                            settings.getString("PathDefaultPicture", "")));
+                    startActivity(intent);
                 }
 
-                // Set the new wallpaper
-                Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(nextWallpaperUri);
-                startActivity(intent);
+
             }
         };
 
@@ -101,7 +107,7 @@ public class MainActivity extends Activity {
         // Set the alarm to start at midnight
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
         calendar.set(Calendar.MINUTE, 0);
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),

@@ -4,18 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * Created by Sagold on 2017-01-15.
  */
 
-public class WallpaperFinder extends AsyncTask<String, Integer, String> {
+public class WallpaperFinder extends AsyncTask<String, Integer, Set<String>> {
 
     private SharedPreferences settings;
     public WallpaperFinder (Context p_context) {
@@ -24,7 +28,7 @@ public class WallpaperFinder extends AsyncTask<String, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected Set<String> doInBackground(String... params) {
         // Get the current date
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -32,6 +36,7 @@ public class WallpaperFinder extends AsyncTask<String, Integer, String> {
 
         // Get the first file corresponding with the current date
         File directoryChoosen = new File(params[0]);
+        Set<String> pathPictureFounds = new HashSet<String>();
         for (File f : directoryChoosen.listFiles()) {
             // Get the date of the file
             c.setTimeInMillis(f.lastModified());
@@ -43,23 +48,19 @@ public class WallpaperFinder extends AsyncTask<String, Integer, String> {
                 if (day == fileDay && month == fileMonth &&
                    (extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPEG.toString())||
                     extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPG.toString()) ||
-                    extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.PNG.toString()))){
-                    return f.getPath();
+                    extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.PNG.toString()))) {
+                    pathPictureFounds.add(f.getPath());
                 }
             }
         }
-        return null;
+        return pathPictureFounds;
     }
 
     @Override
-    protected void onPostExecute(String p_result) {
+    protected void onPostExecute(Set<String> p_result) {
         SharedPreferences.Editor settingsEditor = settings.edit();
-        if (p_result != null) {
-            settingsEditor.putString("PathPictureFound", p_result);
-        } else {
-            // Set a wallpaper by default
-            settingsEditor.putString("PathPictureFound", "");
-        }
+        // Initialize
+        settingsEditor.putStringSet("PathPictureFound", p_result);
         settingsEditor.apply();
     }
 

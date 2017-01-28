@@ -2,12 +2,15 @@ package com.sag0ld.background_stories;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
 
 /**
  * Created by Sagold on 2017-01-08.
  */
 
-public class Directory {
+public class Directory{
 
     private ArrayList<File> m_childDirectories = new ArrayList<>();
     private ArrayList<File> m_childFiles = new ArrayList<>();
@@ -38,6 +41,9 @@ public class Directory {
         allChildren.addAll(m_childFiles);
         return allChildren;
     }
+    public void setPath( String p_path) {
+        m_path = p_path;
+    }
 
     public void setChildDirectories (ArrayList<File> p_directories) {
         m_childDirectories = p_directories;
@@ -45,9 +51,5 @@ public class Directory {
 
     public void setChildFiles (ArrayList<File> p_files) {
         m_childFiles = p_files;
-    }
-
-    public void setPath (String p_path) {
-        m_path = p_path;
     }
 }

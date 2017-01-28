@@ -13,6 +13,8 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Sagold on 2017-01-15.
@@ -29,14 +31,14 @@ public class NotificationBroadcast extends BroadcastReceiver {
         Context.MODE_PRIVATE);
         new WallpaperFinder(context).execute(settings.getString("PathFolder", ""));
 
-        String pathPicture = settings.getString("PathPictureFound" , "");
+        Set<String> pathPicture = settings.getStringSet("PathPictureFound" , new HashSet<String>());
 
         // if no picture found, don't push a notification
-        if (!pathPicture.equals(""))
-            showNotification(settings.getString("PathPictureFound", ""));
+        if (pathPicture.size() > 0)
+            showNotification(pathPicture);
     }
 
-    private void showNotification (String p_pathPictureFound) {
+    private void showNotification (Set<String> p_pathPictureFound) {
         // Notification
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(m_context)
@@ -44,15 +46,21 @@ public class NotificationBroadcast extends BroadcastReceiver {
                         .setContentTitle("New Wallpaper found!")
                         .setContentText("We find a new match!")
                         .setAutoCancel(true);
+        Intent intent;
+        if (p_pathPictureFound.size() == 1) {
+            // Set the new image to Crop and set to background
+            WallpaperManager wallpaperManager
+                    = WallpaperManager.getInstance(m_context);
+            File wallpaperFile = new File(p_pathPictureFound.iterator().next());
 
-        // Set the new image to Crop and set to background
-        WallpaperManager wallpaperManager
-                = WallpaperManager.getInstance(m_context);
-        File wallpaperFile = new File(p_pathPictureFound);
-
-        // Get the content Uri to set into the intent
-        Uri contentURI = WallpaperFinder.getImageContentUri(m_context, wallpaperFile.getAbsolutePath());
-        Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
+            // Get the content Uri to set into the intent
+            Uri contentURI = WallpaperFinder.getImageContentUri(m_context, wallpaperFile.getAbsolutePath());
+            intent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
+        }
+        // If founded more then one picture
+        else {
+            intent = new Intent(m_context, WallpaperChooser.class);
+        }
 
         // Set the intent to the notification Click
         PendingIntent resultPendingIntent =
