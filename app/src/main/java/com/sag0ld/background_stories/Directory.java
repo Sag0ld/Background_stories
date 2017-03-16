@@ -1,55 +1,76 @@
 package com.sag0ld.background_stories;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.Stack;
 
 
 /**
  * Created by Sagold on 2017-01-08.
  */
 
-public class Directory{
+public class Directory {
 
-    private ArrayList<File> m_childDirectories = new ArrayList<>();
-    private ArrayList<File> m_childFiles = new ArrayList<>();
-    private String m_path;
+    private File m_currentDirectory;
+    private File m_previousDirectory;
+    private Stack<File> m_history;
+    private Boolean isAccessible;
 
-    public Directory (ArrayList<File> p_directories, ArrayList<File> p_files, String p_path) {
-        m_childDirectories.addAll(p_directories);
-        m_childFiles.addAll(p_files);
-        m_path = p_path;
+    public Directory () {
+        m_history = new Stack<>();
+        //if the storage device is writable and readable, set the current directory to the external storage location.
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            m_currentDirectory = Environment.getExternalStorageDirectory();
+            isAccessible = true;
+        }
+        else
+            isAccessible = false;
+
     }
-
-    public ArrayList<File> getFolders() {
-        return m_childDirectories;
+    public Boolean isAccessible () {
+        return isAccessible;
     }
-
+    public Boolean hasPreviousDirectory (){
+        return m_history.isEmpty();
+    }
     public ArrayList<File> getFiles() {
-        return m_childFiles;
+
+        ArrayList<File> directories = new ArrayList<>();
+        ArrayList<File> files = new ArrayList<>();
+        for (File inFile : m_currentDirectory.listFiles()) {
+            if (inFile.isDirectory()) {
+                directories.add(inFile);
+            }
+            else {
+                files.add(inFile);
+            }
+        }
+
+        //Sort
+        Collections.sort(directories);
+        Collections.sort(files);
+
+        directories.addAll(files);
+        return directories;
     }
 
-    public String getPath() {
-        return m_path;
+    public File getCurrentDirectory() {
+        return m_currentDirectory;
     }
 
-    // Return a Array containing subsolfer and file
-    public ArrayList<File> getAllChildren() {
-        ArrayList<File> allChildren = new ArrayList<>();
-        allChildren.addAll(m_childDirectories);
-        allChildren.addAll(m_childFiles);
-        return allChildren;
-    }
-    public void setPath( String p_path) {
-        m_path = p_path;
+    public File getPreviousDirectory (){
+        return m_history.pop();
     }
 
-    public void setChildDirectories (ArrayList<File> p_directories) {
-        m_childDirectories = p_directories;
+    public void setCurrentDirectory(File p_folder) {
+        m_currentDirectory = p_folder;
     }
 
-    public void setChildFiles (ArrayList<File> p_files) {
-        m_childFiles = p_files;
+    public void setPreviousDirectory (File p_previousDirectory) {
+        m_history.add(p_previousDirectory);
+        m_previousDirectory = p_previousDirectory;
     }
 }

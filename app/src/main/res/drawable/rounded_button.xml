@@ -1,29 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Bottom 2dp Shadow -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Bottom 2dp Shadow -->
-    <item>
-        <shape  android:shape="rectangle">
-            <solid android:color="@color/colorLineEditText" />
-            <corners android:radius="70dp" />
-
-        </shape>
-    </item>
-
-    <!-- White Top color -->
-    <item android:bottom="20px">
-
-        <shape  android:shape="rectangle">
-
-            <solid android:color="@color/colorButton" />
-            <corners android:radius="70dp" />
-
-
-        </shape>
-
-    </item>
-
-
-</layer-list>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:startColor="#da4972"
+        android:centerColor="#c84972"
+        android:endColor="#a8415e"
+        android:angle="270"/>
+    <padding android:left="7dp"
+        android:top="7dp"
+        android:right="7dp"
+        android:bottom="7dp" />
+    <stroke
+        android:width="5dip"
+        android:color="#FFFFFF" />
+    <corners android:radius= "30dp" />
+</shape>

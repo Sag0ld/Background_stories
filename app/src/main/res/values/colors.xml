@@ -3,9 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#ff4081</color>
-    <color name="colorButton">#CC4452</color>
+    <color name="colorButton">#da4972</color>
+    <color name="colorButtonText">#fff</color>
     <color name="colorTitle">#cc695c</color>
-    <color name="backgroundColor">#F1E6D4</color>
+    <color name="backgroundColor">#eddae0</color>
     <color name="colorLineEditText">#791F33</color>
     <color name="colorTextListView">#723147</color>
 </resources>

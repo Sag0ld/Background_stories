@@ -22,8 +22,8 @@ import java.util.List;
  */
 
 public class DirectoryArrayAdapter extends ArrayAdapter<File> {
-    private Context context;
-    private List<File> rentalProperties;
+    private Context m_context;
+    private List<File> m_files;
     public enum fileType {Dir, File}
     public enum imgExtension { JPG, PNG, JPEG}
 
@@ -31,18 +31,18 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
     public DirectoryArrayAdapter (Context context, int resource, ArrayList<File> objects) {
         super(context, resource, objects);
 
-        this.context = context;
-        this.rentalProperties = objects;
+        this.m_context = context;
+        this.m_files = objects;
     }
 
     //called when rendering the list
     public View getView(int position, View convertView, ViewGroup parent) {
 
         //get the property we are displaying
-        File item = rentalProperties.get(position);
+        File item = m_files.get(position);
 
         //get the inflater and inflate the XML layout for each item
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService
+        LayoutInflater inflater = (LayoutInflater) m_context.getSystemService
                                                     (Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_list, null);
 
@@ -52,7 +52,7 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
         TextView type = (TextView) view.findViewById(R.id.txtType);
         ImageView imageAccepted = (ImageView) view.findViewById(R.id.imageThumbnail);
 
-        Typeface fontAwesomeFont = Typeface.createFromAsset(context.getAssets(),
+        Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
                                     "fonts/fontawesome-webfont.ttf");
         fontAwesomeIcon.setTypeface(fontAwesomeFont);
         path.setText(item.getPath());

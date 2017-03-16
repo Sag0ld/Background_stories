@@ -80,7 +80,7 @@ public class WallpaperChooser extends AppCompatActivity {
                 }
                 if(pathSelected != "") {
                     Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(
-                            WallpaperFinder.getImageContentUri(getApplicationContext(), pathSelected));
+                            WallpaperFinderIntentService.getImageContentUri(getApplicationContext(), pathSelected));
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to select one of those picture.",

@@ -14,14 +14,15 @@
     android:background="@color/backgroundColor">
 
     <ImageView
-        android:layout_width="111dp"
-        android:layout_height="142dp"
+        android:layout_width="wrap_content"
+        android:layout_height="129dp"
         android:id="@+id/imageView3"
-        android:background="@drawable/story_teller_white"
+        android:background="@drawable/storyteller_text_logo"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:tintMode="multiply" />
+        android:tintMode="multiply"
+        android:scaleType="center" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -34,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView"
-                android:textColor="@color/colorTitle"
+                android:textColor="@color/colorButton"
                 android:textSize="20sp"
                 android:layout_marginTop="10dp" />
         </TableRow>
@@ -64,6 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonFindFolder"
+                android:textColor="@color/colorButtonText"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:background="@drawable/rounded_button"/>
         </TableRow>
@@ -75,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textView2"
                 android:textSize="20sp"
-                android:textColor="@color/colorTitle"
+                android:textColor="@color/colorButton"
                 android:layout_marginTop="30sp" />
         </TableRow>
 
@@ -101,6 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnBrowsePicture"
+                android:textColor="@color/colorButtonText"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:background="@drawable/rounded_button" />
         </TableRow>
@@ -110,22 +113,24 @@
     <Button
         android:text="Set my wallpaper"
         android:layout_width="match_parent"
-        android:id="@+id/btnDone"
+        android:id="@+id/btnSetWallPaper"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="20sp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="30sp"
-        android:background="@drawable/rounded_button"/>
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/colorButtonText" />
 
     <Button
-        android:text="Browse"
+        android:text="Save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button13"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:backgroundTint="@color/colorButton"
-        style="?attr/buttonStyle" />
+        android:id="@+id/btnSaveSetting"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/colorButtonText"
+        android:textSize="30sp"
+        android:textAllCaps="false" />
 
 </LinearLayout>
