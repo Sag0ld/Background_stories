@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import java.util.Calendar;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     // Constant
     public static final String PREFERENCE_FILE_NAME = "PreferenceSetting";
@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
         Button btnDone = (Button) findViewById(R.id.btnSetWallPaper);
         Button btnSave = (Button) findViewById(R.id.btnSaveSetting);
 
+        // To do in background
         // If preferrenceSetting exist, restore them else its going to be created
         settings = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
         editPathFolder.setText(settings.getString("PathFolder", ""));
@@ -93,19 +94,23 @@ public class MainActivity extends Activity {
         btnDone.setOnClickListener(btnDoneOnClick);
         btnSave.setOnClickListener(btnSaveSettingOnClick);
 
-        //Initialize the Alarm for the recurency to find a new wallpaper
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, WallpaperFinderIntentService.class);
-        PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        new Thread(new Runnable() {
+            public void run() {
+                //Initialize the Alarm for the recurency to find a new wallpaper
+                AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+                Intent intent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
+                PendingIntent alarmIntent = PendingIntent.getService
+                                        (MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        // Set the alarm to start at midnight
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+                // Set the alarm to start at midnight
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, 23);
+                calendar.set(Calendar.MINUTE, 22);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                        AlarmManager.INTERVAL_DAY, alarmIntent);
+                }
+        }).start();
     }
 
     @Override

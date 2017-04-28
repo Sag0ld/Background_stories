@@ -2,4 +2,15 @@
     <string name="app_name">StoryTeller</string>
     <string name="font_awesome_folder">&#xf07b;</string>
     <string name="font_awesome_file">&#xf15b;</string>
+
+    <string name="btnBrowse">Browse</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_set">Set my wallpaper</string>
+    <string name="btn_choose">Choose</string>
+    <string name="label_of_path_directory">Choose your picture directory</string>
+    <string name="label_of_path_image">Choose your default background</string>
+
+
+    <string name="title_of_chooserview">We found many souvenirs !</string>
+    <string name="subtitle_of_chooserview">Choose one of them to set as your wallpaper</string>
 </resources>

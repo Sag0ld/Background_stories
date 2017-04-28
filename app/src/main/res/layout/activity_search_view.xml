@@ -9,39 +9,37 @@
     android:background="@color/backgroundColor">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="5dp"
+        android:orientation="horizontal">
 
         <Button
-            android:text="Button"
+            android:id="@+id/btnPreviousDirectory"
+            style="@style/Widget.AppCompat.Button.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnPreviousDirectory"
-            android:textSize="12sp"
-            style="@style/Widget.AppCompat.Button.Small"
-            android:backgroundTint="@color/colorButton" />
+            android:backgroundTint="@color/colorButton"
+            android:textSize="12sp" />
 
         <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/txtCurrentDirectory"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
             android:layout_weight="1"
-            android:textSize="18sp"
-            android:layout_marginLeft="5dp"
-            android:textAlignment="viewStart"
+            android:gravity="center_vertical"
             android:textColor="@color/colorLineEditText"
-            android:gravity="center_vertical" />
+            android:textIsSelectable="true"
+            android:textSize="18sp" />
 
         <Button
-            android:text="Choose"
+            android:id="@+id/btnChoose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnChoose"
-            android:backgroundTint="@color/colorButton" />
+            android:backgroundTint="@color/colorButton"
+            android:text="@string/btn_choose" />
 
     </LinearLayout>
 

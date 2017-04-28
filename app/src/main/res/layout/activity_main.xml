@@ -22,7 +22,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:tintMode="multiply"
-        android:scaleType="center" />
+        android:scaleType="center"/>
 
     <TableLayout
         android:layout_width="match_parent"
@@ -31,13 +31,13 @@
         <TableRow>
 
             <TextView
-                android:text="Choose your picture directory"
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView"
+                android:layout_marginTop="10dp"
+                android:text="@string/label_of_path_directory"
                 android:textColor="@color/colorButton"
-                android:textSize="20sp"
-                android:layout_marginTop="10dp" />
+                android:textSize="20sp" />
         </TableRow>
 
         <TableRow
@@ -61,24 +61,24 @@
                 android:textSize="18sp" />
 
             <Button
-                android:text="Browse"
+                android:id="@+id/buttonFindFolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/buttonFindFolder"
-                android:textColor="@color/colorButtonText"
+                android:background="@drawable/rounded_button"
+                android:text="@string/btnBrowse"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:background="@drawable/rounded_button"/>
+                android:textColor="@color/colorButtonText" />
         </TableRow>
         <TableRow>
 
             <TextView
-                android:text="Choose your default background"
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView2"
-                android:textSize="20sp"
+                android:layout_marginTop="30sp"
+                android:text="@string/label_of_path_image"
                 android:textColor="@color/colorButton"
-                android:layout_marginTop="30sp" />
+                android:textSize="20sp" />
         </TableRow>
 
         <TableRow
@@ -99,38 +99,38 @@
                 android:enabled="false" />
 
             <Button
-                android:text="Browse"
+                android:id="@+id/btnBrowsePicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnBrowsePicture"
-                android:textColor="@color/colorButtonText"
+                android:background="@drawable/rounded_button"
+                android:text="@string/btnBrowse"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:background="@drawable/rounded_button" />
+                android:textColor="@color/colorButtonText" />
         </TableRow>
 
     </TableLayout>
 
     <Button
-        android:text="Set my wallpaper"
-        android:layout_width="match_parent"
         android:id="@+id/btnSetWallPaper"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20sp"
-        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="30sp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginBottom="20sp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/rounded_button"
-        android:textColor="@color/colorButtonText" />
+        android:text="@string/btn_set"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorButtonText"
+        android:textSize="30sp" />
 
     <Button
-        android:text="Save"
+        android:id="@+id/btnSaveSetting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSaveSetting"
         android:background="@drawable/rounded_button"
+        android:text="@string/btn_save"
+        android:textAllCaps="false"
         android:textColor="@color/colorButtonText"
-        android:textSize="30sp"
-        android:textAllCaps="false" />
+        android:textSize="30sp" />
 
 </LinearLayout>

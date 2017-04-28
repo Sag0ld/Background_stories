@@ -46,21 +46,21 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
                                                     (Activity.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_list, null);
 
-        TextView path = (TextView) view.findViewById(R.id.txtPath);
+        //TextView path = (TextView) view.findViewById(R.id.txtPath);
         TextView name = (TextView) view.findViewById(R.id.txtItemName);
         TextView fontAwesomeIcon = (TextView) view.findViewById(R.id.fontAwesomeIconTextView);
-        TextView type = (TextView) view.findViewById(R.id.txtType);
+        //TextView type = (TextView) view.findViewById(R.id.txtType);
         ImageView imageAccepted = (ImageView) view.findViewById(R.id.imageThumbnail);
 
         Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
                                     "fonts/fontawesome-webfont.ttf");
         fontAwesomeIcon.setTypeface(fontAwesomeFont);
-        path.setText(item.getPath());
+        //path.setText(item.getPath());
         name.setText(item.getName());
 
         //Initilize type and imageView
         if(item.isDirectory()) {
-            type.setText(fileType.Dir.name());
+            //type.setText(fileType.Dir.name());
             fontAwesomeIcon.setText(R.string.font_awesome_folder);
             imageAccepted.setVisibility(ImageView.GONE);
         } else {
@@ -78,7 +78,7 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
                 fontAwesomeIcon.setText(R.string.font_awesome_file);
                 imageAccepted.setVisibility(ImageView.GONE);
             }
-            type.setText(fileType.File.name());
+            //type.setText(fileType.File.name());
         }
         return view;
     }

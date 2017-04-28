@@ -5,6 +5,7 @@ import android.os.Environment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 
@@ -33,28 +34,8 @@ public class Directory {
     public Boolean isAccessible () {
         return isAccessible;
     }
-    public Boolean hasPreviousDirectory (){
-        return m_history.isEmpty();
-    }
-    public ArrayList<File> getFiles() {
-
-        ArrayList<File> directories = new ArrayList<>();
-        ArrayList<File> files = new ArrayList<>();
-        for (File inFile : m_currentDirectory.listFiles()) {
-            if (inFile.isDirectory()) {
-                directories.add(inFile);
-            }
-            else {
-                files.add(inFile);
-            }
-        }
-
-        //Sort
-        Collections.sort(directories);
-        Collections.sort(files);
-
-        directories.addAll(files);
-        return directories;
+    public Boolean hasPreviousDirectory () {
+        return !(m_history.isEmpty());
     }
 
     public File getCurrentDirectory() {
@@ -72,5 +53,25 @@ public class Directory {
     public void setPreviousDirectory (File p_previousDirectory) {
         m_history.add(p_previousDirectory);
         m_previousDirectory = p_previousDirectory;
+    }
+    public List<File> getFiles() {
+
+        List<File> directories = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        for (File inFile : m_currentDirectory.listFiles()) {
+            if (inFile.isDirectory()) {
+                directories.add(inFile);
+            }
+            else {
+                files.add(inFile);
+            }
+        }
+
+        //Sort
+        Collections.sort(directories);
+        Collections.sort(files);
+
+        directories.addAll(files);
+        return directories;
     }
 }

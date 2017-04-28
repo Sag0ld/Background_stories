@@ -5,13 +5,13 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
         android:id="@+id/fontAwesomeIconTextView"
+        android:layout_width="wrap_content"
         android:layout_height="55dp"
+        android:padding="5dp"
+        android:text="i"
         android:textColor="@color/colorTextListView"
-        android:textSize="55sp"
-        android:padding="5dp" />
+        android:textSize="55sp" />
 
     <ImageView
         android:layout_width="58dp"
@@ -22,35 +22,16 @@
         android:padding="5dp"
         android:scaleType="fitXY" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="24dp"
-        android:gravity="center_vertical">
+    <TextView
+        android:id="@+id/txtItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:text="d"
+        android:textColor="@color/colorTextListView"
+        android:textSize="18sp"
+        android:textStyle="normal|bold" />
 
-        <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtPath"
-            android:visibility="gone" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtType"
-            android:visibility="gone" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/txtItemName"
-            android:textSize="18sp"
-            android:textStyle="normal|bold"
-            android:textColor="@color/colorTextListView" />
-
-    </LinearLayout>
 </LinearLayout>
