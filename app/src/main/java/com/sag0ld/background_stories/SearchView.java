@@ -14,11 +14,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import java.io.Console;
 import java.io.File;
-import java.util.ArrayList;
-
-import static com.sag0ld.background_stories.R.id.btnPreviousDirectory;
 
 public class SearchView extends Activity {
 
@@ -44,8 +40,10 @@ public class SearchView extends Activity {
         } else {
             // If preferrenceSetting does exist, restore them else its going to be created
             settings = getSharedPreferences(getString(R.string.preference_file_name), MODE_PRIVATE);
+
             File file = new File(settings.getString(getString(R.string.saved_path_directory),
                     getString(R.string.saved_path_directory_default)));
+
             if (!file.getName().equals(""))
                 m_directory.setCurrentDirectory(file);
         }
@@ -56,20 +54,21 @@ public class SearchView extends Activity {
 
         // Init View
         if(!m_directory.hasPreviousDirectory())
-            btnPreviousDirectory.setClickable(false);
+            btnPreviousDirectory.setEnabled(false);
 
         txtCurrentDirectoryName.setText(m_directory.getCurrentDirectory().getName());
-        /*ImageLoaderConfiguration config = new ImageLoaderConfiguration
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(this).
                 build();
-        ImageLoader.getInstance().init(config);*/
+        ImageLoader.getInstance().init(config);
 
         // Listener for ItemClick of the ListView
         ListView.OnItemClickListener directoryOnItemClick = new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                System.out.append("Onclick Item call");
+                System.out.println("Onclick Item call");
                 String searchFor = "";
                 if(getIntent().hasExtra("browseType"))
                     searchFor = getIntent().getStringExtra("BrowseType");
@@ -112,7 +111,7 @@ public class SearchView extends Activity {
         Button.OnClickListener previousOnClickListener = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.append("Onclick previous button call");
+                System.out.println("Onclick previous button call");
                 //If we have a previous dir to go back to, do it.
                 if (m_directory.hasPreviousDirectory()) {
                     File previous = m_directory.getPreviousDirectory();
@@ -131,7 +130,6 @@ public class SearchView extends Activity {
                     updateListView();
                 }
                 else {
-
                     btnPreviousDirectory.setEnabled(false);
                     btnPreviousDirectory.setText("/");
                 };
@@ -141,7 +139,7 @@ public class SearchView extends Activity {
         Button.OnClickListener chooseOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.append("Onclick choose call");
+                System.out.println("Onclick choose call");
                 Intent i = new Intent();
                 i.putExtra(SearchView.this.getString(R.string.intent_extra_directory),
                         m_directory.getCurrentDirectory().getAbsolutePath());
@@ -157,6 +155,7 @@ public class SearchView extends Activity {
     }
 
     private void updateListView() {
+        System.out.println("update view");
         //clear the old data.
         m_DirectoryArrayAdapter.clear();
         //add the new data.

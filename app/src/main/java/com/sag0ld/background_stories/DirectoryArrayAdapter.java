@@ -1,6 +1,5 @@
 package com.sag0ld.background_stories;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,46 +40,38 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
                 .cacheOnDisk(true).cacheInMemory(true).considerExifParams(true).build();
     }
 
-
-    //called when rendering the list
     public View getView(int position, View convertView, ViewGroup parent) {
-        final int m_pos = position;
-
-        //get the inflater and inflate the XML layout for each item
-        LayoutInflater inflater = (LayoutInflater) m_context.getSystemService
-                (Activity.LAYOUT_INFLATER_SERVICE);
-
-        //Init the view holder
-        ViewHolder holder;
+        ViewHolder viewHolder;
         if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.item_list, null);
-            holder.picture = (ImageView) convertView.findViewById(R.id.imageThumbnail);
-            holder.name = (TextView) convertView.findViewById(R.id.txtItemName);
-            holder.fontAwesomeIcon = (TextView) convertView.findViewById(R.id.fontAwesomeIconTextView);
-            holder.progress = (ProgressBar) convertView.findViewById(R.id.progress_spinner);
-            convertView.setTag(holder);
-        }else{
-            holder = (ViewHolder) convertView.getTag();
+            convertView = LayoutInflater.from(m_context).inflate(R.layout.item_list, parent, false);
+            viewHolder = new ViewHolder();
+
+            // Immediately access to all view component inside the tag of the layout
+            viewHolder.picture = (ImageView) convertView.findViewById(R.id.imageThumbnail);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.txtItemName);
+            viewHolder.fontAwesomeIcon = (TextView) convertView.findViewById(R.id.fontAwesomeIconTextView);
+            viewHolder.progress = (ProgressBar) convertView.findViewById(R.id.progress_spinner);
+            convertView.setTag(viewHolder);
+
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
         //get the property we are displaying
         final File item = m_files.get(position);
 
-        holder.picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        holder.picture.setPadding(8, 8, 8, 8);
+        viewHolder.picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        viewHolder.picture.setPadding(8, 8, 8, 8);
         Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
                                     "fonts/fontawesome-webfont.ttf");
-        holder.fontAwesomeIcon.setTypeface(fontAwesomeFont);
-        //path.setText(item.getPath());
-        holder.name.setText(item.getName());
+        viewHolder.fontAwesomeIcon.setTypeface(fontAwesomeFont);
+        viewHolder.name.setText(item.getName());
 
-        //Initilize type and imageView
+        //Initilize imageView
         if(item.isDirectory()) {
-            //type.setText(fileType.Dir.name());
-            holder.fontAwesomeIcon.setText(R.string.font_awesome_folder);
-            holder.picture.setVisibility(ImageView.GONE);
-            holder.progress.setVisibility(ProgressBar.GONE);
+            viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_folder);
+            viewHolder.picture.setVisibility(ImageView.GONE);
+            viewHolder.progress.setVisibility(ProgressBar.GONE);
         } else {
             String[] separeteditems = item.getName().split("\\.");
             String extension  = separeteditems[separeteditems.length - 1];
@@ -90,16 +80,24 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
                extension.equalsIgnoreCase(imgExtension.JPG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.PNG.toString())) {
 
-                ImageAware imageAware = new ImageViewAware(holder.picture, false);
+                ImageAware imageAware = new ImageViewAware(viewHolder.picture, false);
                 imageLoader.displayImage(item.getAbsolutePath(), imageAware,options);
 
-                holder.fontAwesomeIcon.setVisibility(TextView.GONE);
+                viewHolder.fontAwesomeIcon.setVisibility(TextView.GONE);
             } else {
-                holder.fontAwesomeIcon.setText(R.string.font_awesome_file);
-                holder.picture.setVisibility(ImageView.GONE);
-                holder.progress.setVisibility(ProgressBar.GONE);
+                viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_file);
+                viewHolder.picture.setVisibility(ImageView.GONE);
+                viewHolder.progress.setVisibility(ProgressBar.GONE);
             }
         }
         return convertView;
+    }
+
+    static class ViewHolder {
+        TextView name;
+        TextView fontAwesomeIcon;
+        ImageView picture;
+        ProgressBar progress;
+        int position;
     }
 }
