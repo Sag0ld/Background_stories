@@ -7,10 +7,22 @@
     <string name="btn_save">Save</string>
     <string name="btn_set">Set my wallpaper</string>
     <string name="btn_choose">Choose</string>
+
     <string name="label_of_path_directory">Choose your picture directory</string>
     <string name="label_of_path_image">Choose your default background</string>
 
 
     <string name="title_of_chooserview">We found many souvenirs !</string>
     <string name="subtitle_of_chooserview">Choose one of them to set as your wallpaper</string>
+
+    <string name="intent_extra_directory">PathDirectory</string>
+    <string name="intent_extra_wallpaper">PathWallpaper</string>
+
+    <!-- Shared Preferences -->
+    <string name="preference_file_name">com.example.StoryTeller.PREFERENCE_FILE_NAME</string>
+    <string name="saved_path_directory">PathDirectory</string>
+    <string name="saved_path_directory_default">""</string>
+    <string name="saved_path_wallpaper">PathWallpaper</string>
+    <string name="saved_path_default_wallpaper">""</string>
+
 </resources>

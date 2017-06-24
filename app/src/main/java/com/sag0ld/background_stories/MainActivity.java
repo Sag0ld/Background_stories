@@ -10,15 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import java.util.Calendar;
 
-public class MainActivity extends Activity{
-
-    // Constant
-    public static final String PREFERENCE_FILE_NAME = "PreferenceSetting";
+public class MainActivity extends Activity {
 
     // Variable
-    public enum BrowseType {Picture, Folder}
+    public enum BrowseType { Picture, Folder }
     private EditText editPathFolder;
     private EditText editPathPicture;
     private SharedPreferences settings;
@@ -37,13 +35,12 @@ public class MainActivity extends Activity{
         Button btnDone = (Button) findViewById(R.id.btnSetWallPaper);
         Button btnSave = (Button) findViewById(R.id.btnSaveSetting);
 
-        // To do in background
-        // If preferrenceSetting exist, restore them else its going to be created
-        settings = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
-        editPathFolder.setText(settings.getString("PathFolder", ""));
-        editPathPicture.setText(settings.getString("PathDefaultPicture", ""));
-
-
+        // If preferrenceSetting does exist, restore them else its going to be created
+        settings = getSharedPreferences(getString(R.string.preference_file_name), MODE_PRIVATE);
+        editPathFolder.setText(settings.getString(getString(R.string.saved_path_directory),
+                                                  getString(R.string.saved_path_directory_default)));
+        editPathPicture.setText(settings.getString(getString(R.string.saved_path_wallpaper),
+                                                   getString(R.string.saved_path_default_wallpaper)));
         // Listener
         View.OnClickListener browseFolderListener = new View.OnClickListener() {
             public void onClick(View v) {
@@ -55,7 +52,7 @@ public class MainActivity extends Activity{
 
         View.OnClickListener browsePictureListener = new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, SearchView.class);
+               Intent i = new Intent(MainActivity.this, SearchView.class);
                 i.putExtra("BrowseType", BrowseType.Picture.toString());
                 startActivityForResult(i, 1);
             }
@@ -64,13 +61,13 @@ public class MainActivity extends Activity{
         final Button.OnClickListener btnDoneOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Validation
+               // Validation
                 StringBuilder errorMsgBuilder = new StringBuilder();
                 if (editPathFolder.getText().toString().isEmpty())
                     errorMsgBuilder.append("You need to choose a folder!\n");
                 if (editPathPicture.getText().toString().isEmpty())
                     errorMsgBuilder.append("You need to choose a default wallpaper picture!\n");
-                if(!errorMsgBuilder.toString().isEmpty()) {
+                if (!errorMsgBuilder.toString().isEmpty()) {
                     Toast message = Toast.makeText(getApplicationContext(), errorMsgBuilder, Toast.LENGTH_LONG);
                     message.show();
                 }
@@ -94,57 +91,55 @@ public class MainActivity extends Activity{
         btnDone.setOnClickListener(btnDoneOnClick);
         btnSave.setOnClickListener(btnSaveSettingOnClick);
 
-        new Thread(new Runnable() {
-            public void run() {
-                //Initialize the Alarm for the recurency to find a new wallpaper
-                AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-                Intent intent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
-                PendingIntent alarmIntent = PendingIntent.getService
-                                        (MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        //Initialize the Alarm for the recurency to find a new wallpaper
+       AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
+        PendingIntent alarmIntent = PendingIntent.getService
+                (MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-                // Set the alarm to start at midnight
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, 23);
-                calendar.set(Calendar.MINUTE, 22);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                        AlarmManager.INTERVAL_DAY, alarmIntent);
-                }
-        }).start();
+        // Set the alarm to start at midnight
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 22);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        SharedPreferences preferences  = getSharedPreferences(PREFERENCE_FILE_NAME, MODE_PRIVATE);
-            editPathFolder.setText(preferences.getString("PathFolder", ""));
-            editPathPicture.setText(preferences.getString("PathDefaultPicture", ""));
+        SharedPreferences preferences = getSharedPreferences
+                                        (getString(R.string.preference_file_name), MODE_PRIVATE);
+        editPathFolder.setText(preferences.getString(getString(R.string.saved_path_directory),
+                                           getString(R.string.saved_path_directory_default)));
+        editPathPicture.setText(preferences.getString(getString(R.string.saved_path_wallpaper),
+                                            getString(R.string.saved_path_default_wallpaper)));
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+   @Override
+   public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
-            case (0) : {
-                // Update the current path of the folder choosen
+            case 0: {
+                // Update the current path of the folder chosen
                 if (resultCode == Activity.RESULT_OK) {
                     SharedPreferences.Editor settingsEditor  = settings.edit();
-                    settingsEditor.putString("PathFolder", data.getStringExtra("pathFolder"));
-                    settingsEditor.apply();
+                    settingsEditor.putString(getString(R.string.saved_path_directory),
+                            data.getStringExtra(getString(R.string.intent_extra_directory)));
+                    settingsEditor.commit();
                 }
                 break;
             }
-            case (1) : {
-                // Update the current path of the picture choosen
+            case 1: {
+                // Update the current path of the picture chosen
                 if (resultCode == Activity.RESULT_OK) {
                     SharedPreferences.Editor settingsEditor  = settings.edit();
-                    settingsEditor.putString("PathDefaultPicture", data.getStringExtra("pathPicture"));
-                    settingsEditor.apply();
+                    settingsEditor.putString(getString(R.string.saved_path_wallpaper),
+                            data.getStringExtra(getString(R.string.intent_extra_wallpaper)));
+                    settingsEditor.commit();
                 }
                 break;
             }
         }
-    }
+   }
 }
-
-

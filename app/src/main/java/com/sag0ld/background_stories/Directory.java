@@ -45,9 +45,26 @@ public class Directory {
     public File getPreviousDirectory (){
         return m_history.pop();
     }
+    public String getPreviousDirectoryName() {
+        return m_previousDirectory.getName();
+    }
 
     public void setCurrentDirectory(File p_folder) {
         m_currentDirectory = p_folder;
+
+        // If the new file is not the root Directory we need all his previous directory
+        if(m_history.empty()){
+            File tmpCurrentDirectory = m_currentDirectory;
+            List<File> previousDirectory = new ArrayList<>();
+            do {
+                if(tmpCurrentDirectory.getParentFile().exists()) {
+                    previousDirectory.add(tmpCurrentDirectory.getParentFile());
+                    tmpCurrentDirectory = tmpCurrentDirectory.getParentFile();
+                }
+            } while(tmpCurrentDirectory.getParentFile().exists());
+            Collections.reverse(previousDirectory);
+            m_history.addAll(previousDirectory);
+        }
     }
 
     public void setPreviousDirectory (File p_previousDirectory) {

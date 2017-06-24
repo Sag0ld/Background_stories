@@ -39,7 +39,7 @@ public class WallpaperFinderIntentService extends IntentService {
 
         Log.d("a","Jour : "+Integer.toString(day) + " Mois : " + Integer.toString(month));
         //Get data from intent
-        File directoryChoosen = new File (intent.getStringExtra("PathFolder"));
+        File directoryChoosen = new File (intent.getStringExtra("PathDirectory"));
 
         Set<String> pathPictureFounds = new HashSet<String>();
         for (File f : directoryChoosen.listFiles()) {

@@ -9,7 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="55dp"
         android:padding="5dp"
-        android:text="i"
         android:textColor="@color/colorTextListView"
         android:textSize="55sp" />
 
@@ -29,9 +28,16 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="start"
-        android:text="d"
         android:textColor="@color/colorTextListView"
         android:textSize="18sp"
         android:textStyle="normal|bold" />
+
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1" />
 
 </LinearLayout>

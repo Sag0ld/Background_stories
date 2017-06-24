@@ -33,7 +33,8 @@ public class WallpaperChooser extends AppCompatActivity {
         final GridView gridPictureFound = (GridView) findViewById(R.id.gridPictureFound);
         Button btnSetWallpaper = (Button) findViewById(R.id.btnSetWallpaperSelected);
 
-        SharedPreferences settings = getSharedPreferences(MainActivity.PREFERENCE_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences
+                                    (getString(R.string.preference_file_name), MODE_PRIVATE);
         final Set<String> pathsFound = settings.getStringSet("PathPictureFound", new HashSet<String>());
 
         final Vector<Bitmap> bitmaps = new Vector<Bitmap>(pathsFound.size());
