@@ -18,9 +18,11 @@ import java.io.File;
 
 public class SearchView extends Activity {
 
-    final private Directory m_directory = new Directory();
+    private Directory m_directory = new Directory();
     private DirectoryArrayAdapter m_DirectoryArrayAdapter;
     private SharedPreferences settings;
+    private Button btnPreviousDirectory;
+    private TextView txtCurrentDirectoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +31,12 @@ public class SearchView extends Activity {
 
         // Variable
         final ListView ListDirectoriesFiles = (ListView) findViewById(R.id.ListDirectory);
-        final Button btnPreviousDirectory = (Button) findViewById(R.id.btnPreviousDirectory);
+        btnPreviousDirectory = (Button) findViewById(R.id.btnPreviousDirectory);
         final Button btnChoose = (Button) findViewById(R.id.btnChoose);
-        final TextView txtCurrentDirectoryName = (TextView) findViewById(R.id.txtCurrentDirectory);
+        txtCurrentDirectoryName = (TextView) findViewById(R.id.txtCurrentDirectory);
+
+        //If you browse for a directory or a file
+        final String searchFor = getIntent().getStringExtra("BrowseType");
 
         // Init
         if(!m_directory.isAccessible()) {
@@ -41,22 +46,17 @@ public class SearchView extends Activity {
             // If preferrenceSetting does exist, restore them else its going to be created
             settings = getSharedPreferences(getString(R.string.preference_file_name), MODE_PRIVATE);
 
-            File file = new File(settings.getString(getString(R.string.saved_path_directory),
+            File directory = new File(settings.getString(getString(R.string.saved_path_directory),
                     getString(R.string.saved_path_directory_default)));
 
-            if (!file.getName().equals(""))
-                m_directory.setCurrentDirectory(file);
-        }
+            if (!directory.getName().equals(""))
+                m_directory.setHistory(directory);
+            }
 
         m_DirectoryArrayAdapter = new DirectoryArrayAdapter(this,
                 R.layout.item_list, m_directory.getFiles());
         ListDirectoriesFiles.setAdapter(m_DirectoryArrayAdapter);
-
-        // Init View
-        if(!m_directory.hasPreviousDirectory())
-            btnPreviousDirectory.setEnabled(false);
-
-        txtCurrentDirectoryName.setText(m_directory.getCurrentDirectory().getName());
+        updateView();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
                 .Builder(this).
@@ -64,40 +64,32 @@ public class SearchView extends Activity {
         ImageLoader.getInstance().init(config);
 
         // Listener for ItemClick of the ListView
-        ListView.OnItemClickListener directoryOnItemClick = new ListView.OnItemClickListener() {
+        ListView.OnItemClickListener FileOnItemClick = new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-
                 System.out.println("Onclick Item call");
-                String searchFor = "";
-                if(getIntent().hasExtra("browseType"))
-                    searchFor = getIntent().getStringExtra("BrowseType");
 
-                //The file we clicked based on row position where we clicked.  I could probably word that better. :)
+                // The selected file
                 File fileClicked = m_DirectoryArrayAdapter.getItem(position);
 
                 if (fileClicked.isDirectory()) {
-                    //we are changing dirs, so save the previous dir as the one we are currently in.
-                    btnPreviousDirectory.setText(m_directory.getCurrentDirectory().getName());
                     m_directory.setPreviousDirectory(m_directory.getCurrentDirectory());
-                    //set the current dir to the dir we clicked in the listview.
                     m_directory.setCurrentDirectory(fileClicked);
 
-                    //update interface
-                    txtCurrentDirectoryName.setText(m_directory.getCurrentDirectory().getName());
-                    btnPreviousDirectory.setEnabled(true);
-                    DirectoryArrayAdapter adapter =
-                            new DirectoryArrayAdapter (SearchView.this, R.layout.item_list,
-                                    m_directory.getFiles());
+                    btnPreviousDirectory.setText(m_directory.getPreviousDirectoryName());
+                    // Update interface
+                    txtCurrentDirectoryName.setText(fileClicked.getName());
+                    updateListView(m_directory);
+                    updateView();
 
-                } else if (searchFor.equalsIgnoreCase(MainActivity.BrowseType.Folder.toString())){
+                } else if (searchFor.equals(MainActivity.BrowseType.Folder.toString())) {
                     // Pop Up error message
                     CharSequence text = "You have to click on a directory.";
                     int duration = Toast.LENGTH_SHORT;
-
                     Toast toast = Toast.makeText(SearchView.this, text, duration);
                     toast.show();
                 }
+                // Here we search for file
                 else {
                     Intent i = new Intent();
                     i.putExtra(SearchView.this.getString(R.string.intent_extra_wallpaper),
@@ -111,55 +103,61 @@ public class SearchView extends Activity {
         Button.OnClickListener previousOnClickListener = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Onclick previous button call");
-                //If we have a previous dir to go back to, do it.
+                // If we have a previous dir to go back to, do it.
                 if (m_directory.hasPreviousDirectory()) {
-                    File previous = m_directory.getPreviousDirectory();
-                    m_directory.setCurrentDirectory(previous);
+                    File previousDirectory = m_directory.getPreviousDirectory();
+                    m_directory.setCurrentDirectory(previousDirectory);
 
-                    if(!m_directory.hasPreviousDirectory()) {
-                        btnPreviousDirectory.setEnabled(false);
-                        btnPreviousDirectory.setText("/");
-                    } else {
-                        btnPreviousDirectory.setText(m_directory.getPreviousDirectory().getName());
-                        btnPreviousDirectory.setEnabled(true);
-                    }
-                    txtCurrentDirectoryName.setText(m_directory.getCurrentDirectory().getName());
-
-                    //Our content has changed, so we need a new load.
-                    updateListView();
+                    // Our content has changed, so we need a new load.
+                    updateListView(m_directory);
+                    updateView();
                 }
-                else {
-                    btnPreviousDirectory.setEnabled(false);
-                    btnPreviousDirectory.setText("/");
-                };
             }
         };
 
         Button.OnClickListener chooseOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Onclick choose call");
-                Intent i = new Intent();
-                i.putExtra(SearchView.this.getString(R.string.intent_extra_directory),
-                        m_directory.getCurrentDirectory().getAbsolutePath());
-                SearchView.this.setResult(Activity.RESULT_OK, i);
-                SearchView.this.finish();
+                if (searchFor.equals(MainActivity.BrowseType.Folder.toString())) {
+                    Intent i = new Intent();
+                    i.putExtra(SearchView.this.getString(R.string.intent_extra_directory),
+                            m_directory.getCurrentDirectory().getAbsolutePath());
+                    SearchView.this.setResult(Activity.RESULT_OK, i);
+                    SearchView.this.finish();
+                }
+                else  {
+                    CharSequence text = "You can't choose a directory.";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(SearchView.this, text, duration);
+                    toast.show();
+                }
             }
         };
 
         // Initialize Listener
-        ListDirectoriesFiles.setOnItemClickListener(directoryOnItemClick);
+        ListDirectoriesFiles.setOnItemClickListener(FileOnItemClick);
         btnPreviousDirectory.setOnClickListener(previousOnClickListener);
         btnChoose.setOnClickListener(chooseOnClick);
     }
 
-    private void updateListView() {
+    private void updateListView(Directory p_directory) {
         System.out.println("update view");
         //clear the old data.
         m_DirectoryArrayAdapter.clear();
         //add the new data.
-        m_DirectoryArrayAdapter.addAll(m_directory.getPreviousDirectory().listFiles());
+        m_DirectoryArrayAdapter.addAll(p_directory.getFiles());
+    }
 
+    private void updateView() {
+        if (!m_directory.hasPreviousDirectory()) {
+            btnPreviousDirectory.setEnabled(false);
+            btnPreviousDirectory.setText(".");
+        }
+        else {
+            btnPreviousDirectory.setText(m_directory.getPreviousDirectoryName());
+            btnPreviousDirectory.setEnabled(true);
+        }
+
+        txtCurrentDirectoryName.setText(m_directory.getCurrentDirectory().getName());
     }
 }
