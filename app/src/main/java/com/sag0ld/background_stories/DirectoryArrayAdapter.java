@@ -1,7 +1,10 @@
 package com.sag0ld.background_stories;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.media.ThumbnailUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;;
@@ -10,10 +13,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.imageaware.ImageAware;
-import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.List;
@@ -26,8 +26,6 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
     private Context m_context;
     private List<File> m_files;
     public enum imgExtension { JPG, PNG, JPEG}
-    ImageLoader imageLoader;
-    DisplayImageOptions options;
 
     //constructor, call on creation
     public DirectoryArrayAdapter (Context context, int resource, List<File> objects) {
@@ -35,9 +33,6 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
 
         this.m_context = context;
         this.m_files = objects;
-        imageLoader = ImageLoader.getInstance();
-        options = new DisplayImageOptions.Builder()
-                .cacheOnDisk(true).cacheInMemory(true).considerExifParams(true).build();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -50,7 +45,6 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
             viewHolder.picture = (ImageView) convertView.findViewById(R.id.imageThumbnail);
             viewHolder.name = (TextView) convertView.findViewById(R.id.txtItemName);
             viewHolder.fontAwesomeIcon = (TextView) convertView.findViewById(R.id.fontAwesomeIconTextView);
-            viewHolder.progress = (ProgressBar) convertView.findViewById(R.id.progress_spinner);
             convertView.setTag(viewHolder);
 
         } else {
@@ -59,19 +53,15 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
 
         //get the property we are displaying
         final File item = m_files.get(position);
-
-        viewHolder.picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        viewHolder.picture.setPadding(8, 8, 8, 8);
-        Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
-                                    "fonts/fontawesome-webfont.ttf");
-        viewHolder.fontAwesomeIcon.setTypeface(fontAwesomeFont);
         viewHolder.name.setText(item.getName());
+        Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
+                "fonts/fontawesome-webfont.ttf");
+        viewHolder.fontAwesomeIcon.setTypeface(fontAwesomeFont);
 
         //Initilize imageView
         if(item.isDirectory()) {
             viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_folder);
             viewHolder.picture.setVisibility(ImageView.GONE);
-            viewHolder.progress.setVisibility(ProgressBar.GONE);
         } else {
             String[] separeteditems = item.getName().split("\\.");
             String extension  = separeteditems[separeteditems.length - 1];
@@ -79,15 +69,16 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
             if(extension.equalsIgnoreCase(imgExtension.JPEG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.JPG.toString()) ||
                extension.equalsIgnoreCase(imgExtension.PNG.toString())) {
-
-                ImageAware imageAware = new ImageViewAware(viewHolder.picture, false);
-                imageLoader.displayImage(item.getAbsolutePath(), imageAware,options);
+                viewHolder.picture.setPadding(8, 8, 8, 8);
+                Glide
+                        .with(convertView)
+                        .load(item.getAbsolutePath())
+                        .into(viewHolder.picture);
 
                 viewHolder.fontAwesomeIcon.setVisibility(TextView.GONE);
             } else {
                 viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_file);
                 viewHolder.picture.setVisibility(ImageView.GONE);
-                viewHolder.progress.setVisibility(ProgressBar.GONE);
             }
         }
         return convertView;
@@ -97,7 +88,6 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
         TextView name;
         TextView fontAwesomeIcon;
         ImageView picture;
-        ProgressBar progress;
         int position;
     }
 }
