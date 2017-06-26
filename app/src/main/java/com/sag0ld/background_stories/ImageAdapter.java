@@ -8,6 +8,12 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -17,15 +23,18 @@ import java.util.Vector;
 public class ImageAdapter extends BaseAdapter {
 
     private Context m_context;
-    private Vector<Bitmap> m_wallpapers;
-    public ImageAdapter(Context p_context, Vector<Bitmap> p_wallpapers) {
+    private List<String> m_pictureFounds = new ArrayList<>() ;
+    public ImageAdapter(Context p_context, Set<String> p_pictureFounds) {
             m_context = p_context;
-            m_wallpapers = p_wallpapers;
+        Iterator itr = p_pictureFounds.iterator();
+        while(itr.hasNext()) {
+            m_pictureFounds.add(itr.next().toString());
+        }
     }
 
     @Override
     public int getCount() {
-        return m_wallpapers.size();
+        return m_pictureFounds.size();
     }
 
     @Override
@@ -50,7 +59,10 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        imageView.setImageBitmap(m_wallpapers.elementAt(position));
+        Glide
+                .with(imageView)
+                .load(m_pictureFounds.get(position))
+                .into(imageView);
         return imageView;
     }
 }

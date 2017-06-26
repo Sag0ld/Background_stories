@@ -24,5 +24,6 @@
     <string name="saved_path_directory_default">""</string>
     <string name="saved_path_wallpaper">PathWallpaper</string>
     <string name="saved_path_default_wallpaper">""</string>
+    <string name="saved_path_found">PathPictureFound</string>
 
 </resources>

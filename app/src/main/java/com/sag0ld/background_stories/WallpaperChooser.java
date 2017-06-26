@@ -35,21 +35,15 @@ public class WallpaperChooser extends AppCompatActivity {
 
         SharedPreferences settings = getSharedPreferences
                                     (getString(R.string.preference_file_name), MODE_PRIVATE);
-        final Set<String> pathsFound = settings.getStringSet("PathPictureFound", new HashSet<String>());
+        final Set<String> pathsFound = settings.getStringSet(getString(R.string.saved_path_found),
+                                        new HashSet<String>());
 
-        final Vector<Bitmap> bitmaps = new Vector<Bitmap>(pathsFound.size());
-        Iterator<String> it = pathsFound.iterator();
-        while(it.hasNext()) {
-            Bitmap bitmap = ThumbnailUtils.extractThumbnail
-                    (BitmapFactory.decodeFile(it.next()),500,500);
-            bitmaps.add(bitmap);
-        }
-
-        gridPictureFound.setAdapter(new ImageAdapter(this, bitmaps));
+        gridPictureFound.setAdapter(new ImageAdapter(this, pathsFound));
         gridPictureFound.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
+                // Foreach click, reset the background color for all the picture
                 for (int positionChild = 0; positionChild < gridPictureFound.getChildCount();
                         positionChild++) {
                     ImageView child = (ImageView) gridPictureFound.getChildAt(positionChild);
@@ -57,7 +51,7 @@ public class WallpaperChooser extends AppCompatActivity {
                                         getResources().getColor(R.color.backgroundColor));
                     child.setContentDescription("");
                 }
-
+                // Change the background color of the one clicked
                 ImageView imageSelected = (ImageView) gridPictureFound.getChildAt(position);
                 imageSelected.setContentDescription("Selected");
                 imageSelected.setBackgroundColor(getResources().getColor(R.color.colorButton));
@@ -73,13 +67,17 @@ public class WallpaperChooser extends AppCompatActivity {
 
                 Iterator<String> it = pathsFound.iterator();
                 String pathSelected = "";
-                for (int positionChild = 0; it.hasNext(); positionChild++){
+                int positionChild = 0;
+                while(it.hasNext()) {
                     ImageView child = (ImageView) gridPictureFound.getChildAt(positionChild);
-                    if(child.getContentDescription() == "Selected") {
+                    if(child.getContentDescription() == "Selected")
                         pathSelected = it.next();
-                    }
+                    else
+                        it.next();
+                    ++positionChild;
                 }
-                if(pathSelected != "") {
+
+                if(pathSelected !=  "") {
                     Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(
                             WallpaperFinderIntentService.getImageContentUri(getApplicationContext(), pathSelected));
                     startActivity(intent);

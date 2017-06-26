@@ -7,6 +7,7 @@ import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -37,9 +38,13 @@ public class WallpaperFinderIntentService extends IntentService {
         int day = c.get(Calendar.DAY_OF_MONTH);
         int month = c.get(Calendar.MONTH);
 
+        SharedPreferences settings = getSharedPreferences
+                (getString(R.string.preference_file_name), MODE_PRIVATE);
+
         Log.d("a","Jour : "+Integer.toString(day) + " Mois : " + Integer.toString(month));
         //Get data from intent
-        File directoryChoosen = new File (intent.getStringExtra("PathDirectory"));
+        File directoryChoosen = new File (intent.getStringExtra(
+                                                 getString(R.string.saved_path_directory)));
 
         Set<String> pathPictureFounds = new HashSet<String>();
         for (File f : directoryChoosen.listFiles()) {
@@ -58,6 +63,7 @@ public class WallpaperFinderIntentService extends IntentService {
             }
         }
         Log.d("Service number picture","found " + Integer.toString(pathPictureFounds.size()));
+
         //Close the app and if it's found some picture then call notification
         String contentTextCustom = "We found a new match!";
         Intent resultIntent;
@@ -69,6 +75,13 @@ public class WallpaperFinderIntentService extends IntentService {
                             resultIntent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
                     break;
                 default :   contentTextCustom = "We found some new match!";
+
+                            // Set all the path found in the sharedPref
+                            SharedPreferences.Editor settingsEditor  = settings.edit();
+                            settingsEditor.putStringSet(getString(R.string.saved_path_found),
+                                                        pathPictureFounds);
+                            settingsEditor.commit();
+
                             resultIntent = new Intent(this, WallpaperChooser.class);
             }
 

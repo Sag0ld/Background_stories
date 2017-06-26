@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         Button btnBrowsePicture = (Button) findViewById(R.id.btnBrowsePicture);
         editPathFolder = (EditText) findViewById(R.id.pathFolder);
         editPathPicture = (EditText) findViewById(R.id.pathDefaultWallpaper);
-        Button btnDone = (Button) findViewById(R.id.btnSetWallPaper);
+        Button btnSetWallpaper = (Button) findViewById(R.id.btnSetWallPaper);
         Button btnSave = (Button) findViewById(R.id.btnSaveSetting);
 
         // If preferrenceSetting does exist, restore them else its going to be created
@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
             }
         };
 
-        final Button.OnClickListener btnDoneOnClick = new Button.OnClickListener() {
+        final Button.OnClickListener btnSetWallpaperOnClick = new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                // Validation
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
                 }
 
                 Intent serviceIntent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
-                serviceIntent.putExtra("PathFolder", editPathFolder.getText().toString());
+                serviceIntent.putExtra(getString(R.string.saved_path_directory), editPathFolder.getText().toString());
                 startService(serviceIntent);
                 finish();
             }
@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
         // Initialize action
         buttonFindFolder.setOnClickListener(browseFolderListener);
         btnBrowsePicture.setOnClickListener(browsePictureListener);
-        btnDone.setOnClickListener(btnDoneOnClick);
+        btnSetWallpaper.setOnClickListener(btnSetWallpaperOnClick);
         btnSave.setOnClickListener(btnSaveSettingOnClick);
 
         //Initialize the Alarm for the recurency to find a new wallpaper
