@@ -52,18 +52,21 @@ public class Directory {
 
     public void setHistory (File p_directory) {
         // If the new file is not the root Directory we need all his previous directory
-        String tmpCurrentDirectoryPath = p_directory.getPath();
-        List<File> previousDirectory = new ArrayList<>();
-        do {
-            previousDirectory.add(new File (tmpCurrentDirectoryPath));
-            tmpCurrentDirectoryPath = tmpCurrentDirectoryPath.substring(0,
-                                      tmpCurrentDirectoryPath.lastIndexOf('/'));
-        } while(!tmpCurrentDirectoryPath.equals(Environment.getExternalStorageDirectory().getAbsolutePath()));
-        Collections.reverse(previousDirectory);
+        if (!p_directory.equals(Environment.getExternalStorageDirectory())) {
+            String tmpCurrentDirectoryPath = p_directory.getPath();
+            List<File> previousDirectory = new ArrayList<>();
+            do {
+                previousDirectory.add(new File(tmpCurrentDirectoryPath));
+                tmpCurrentDirectoryPath = tmpCurrentDirectoryPath.substring(0,
+                        tmpCurrentDirectoryPath.lastIndexOf('/'));
+            }
+            while (!tmpCurrentDirectoryPath.equals(Environment.getExternalStorageDirectory().getAbsolutePath()));
+            Collections.reverse(previousDirectory);
 
-        for (File directory: previousDirectory) {
-            setPreviousDirectory(m_currentDirectory);
-            setCurrentDirectory(directory);
+            for (File directory : previousDirectory) {
+                setPreviousDirectory(m_currentDirectory);
+                setCurrentDirectory(directory);
+            }
         }
     }
 

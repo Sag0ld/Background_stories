@@ -1,10 +1,7 @@
 package com.sag0ld.background_stories;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.media.ThumbnailUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;;
@@ -38,9 +35,9 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(m_context).inflate(R.layout.item_list, parent, false);
+            convertView = LayoutInflater.from(m_context)
+                                        .inflate(R.layout.item_list, parent, false);
             viewHolder = new ViewHolder();
-
             // Immediately access to all view component inside the tag of the layout
             viewHolder.picture = (ImageView) convertView.findViewById(R.id.imageThumbnail);
             viewHolder.name = (TextView) convertView.findViewById(R.id.txtItemName);
@@ -53,14 +50,18 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
 
         //get the property we are displaying
         final File item = m_files.get(position);
-        viewHolder.name.setText(item.getName());
+
         Typeface fontAwesomeFont = Typeface.createFromAsset(m_context.getAssets(),
                 "fonts/fontawesome-webfont.ttf");
         viewHolder.fontAwesomeIcon.setTypeface(fontAwesomeFont);
 
-        //Initilize imageView
+        viewHolder.name.setText(item.getName());
+
+        //Initilize imageView and icon
         if(item.isDirectory()) {
             viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_folder);
+
+            viewHolder.fontAwesomeIcon.setVisibility(TextView.VISIBLE);
             viewHolder.picture.setVisibility(ImageView.GONE);
         } else {
             String[] separeteditems = item.getName().split("\\.");
@@ -75,10 +76,13 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
                         .load(item.getAbsolutePath())
                         .into(viewHolder.picture);
 
+                viewHolder.picture.setVisibility(ImageView.VISIBLE);
                 viewHolder.fontAwesomeIcon.setVisibility(TextView.GONE);
             } else {
                 viewHolder.fontAwesomeIcon.setText(R.string.font_awesome_file);
+
                 viewHolder.picture.setVisibility(ImageView.GONE);
+                viewHolder.fontAwesomeIcon.setVisibility(TextView.VISIBLE);
             }
         }
         return convertView;
@@ -88,6 +92,5 @@ public class DirectoryArrayAdapter extends ArrayAdapter<File> {
         TextView name;
         TextView fontAwesomeIcon;
         ImageView picture;
-        int position;
     }
 }
