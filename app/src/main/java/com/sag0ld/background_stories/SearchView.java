@@ -11,9 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import java.io.File;
 
 public class SearchView extends Activity {
@@ -58,11 +55,6 @@ public class SearchView extends Activity {
         ListDirectoriesFiles.setAdapter(m_DirectoryArrayAdapter);
         updateView();
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration
-                .Builder(this).
-                build();
-        ImageLoader.getInstance().init(config);
-
         // Listener for ItemClick of the ListView
         ListView.OnItemClickListener FileOnItemClick = new ListView.OnItemClickListener() {
             @Override
@@ -76,9 +68,6 @@ public class SearchView extends Activity {
                     m_directory.setPreviousDirectory(m_directory.getCurrentDirectory());
                     m_directory.setCurrentDirectory(fileClicked);
 
-                    btnPreviousDirectory.setText(m_directory.getPreviousDirectoryName());
-                    // Update interface
-                    txtCurrentDirectoryName.setText(fileClicked.getName());
                     updateListView(m_directory);
                     updateView();
 
@@ -105,8 +94,9 @@ public class SearchView extends Activity {
             public void onClick(View v) {
                 // If we have a previous dir to go back to, do it.
                 if (m_directory.hasPreviousDirectory()) {
-                    File previousDirectory = m_directory.getPreviousDirectory();
-                    m_directory.setCurrentDirectory(previousDirectory);
+                    File previous = m_directory.getPreviousDirectory();
+                    m_directory.setCurrentDirectory(previous);
+
 
                     // Our content has changed, so we need a new load.
                     updateListView(m_directory);

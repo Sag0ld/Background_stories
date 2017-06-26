@@ -42,12 +42,12 @@ public class Directory {
         return m_currentDirectory;
     }
 
-    public File getPreviousDirectory (){
-        return m_history.pop();
+    public File getPreviousDirectory () {
+        return m_history.pop() ;
     }
 
     public String getPreviousDirectoryName() {
-        return m_previousDirectory.getName();
+        return m_history.lastElement().getName();
     }
 
     public void setHistory (File p_directory) {
