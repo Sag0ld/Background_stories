@@ -3,6 +3,7 @@ package com.sag0ld.background_stories;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -100,16 +101,16 @@ public class MainActivity extends Activity {
         btnSave.setOnClickListener(btnSaveSettingOnClick);
 
         //Initialize the Alarm for the recurency to find a new wallpaper
-       AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this, WallpaperFinderIntentService.class);
         PendingIntent alarmIntent = PendingIntent.getService
                 (MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         // Set the alarm to start at midnight
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 22);
+        calendar.set(Calendar.HOUR_OF_DAY, 22);
+        calendar.set(Calendar.MINUTE, 16);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
