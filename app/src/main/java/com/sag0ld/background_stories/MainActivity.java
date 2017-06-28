@@ -37,6 +37,15 @@ public class MainActivity extends Activity {
 
         // If preferrenceSetting does exist, restore them else its going to be created
         settings = getSharedPreferences(getString(R.string.preference_file_name), MODE_PRIVATE);
+
+        // Initialize if we already use this app before
+        if(!settings.contains(getString(R.string.saved_wallpaper_default_set))) {
+            SharedPreferences.Editor settingsEditor = settings.edit();
+            settingsEditor.putString(getString(R.string.saved_wallpaper_default_set),
+                    getString(R.string.saved_wallpaper_default_set_option));
+            settingsEditor.commit();
+        }
+
         editPathFolder.setText(settings.getString(getString(R.string.saved_path_directory),
                                                   getString(R.string.saved_path_directory_default)));
         editPathPicture.setText(settings.getString(getString(R.string.saved_path_wallpaper),
@@ -73,15 +82,14 @@ public class MainActivity extends Activity {
                 }
 
                 Intent serviceIntent = new Intent(MainActivity.this, WallpaperFinderIntentService.class);
-                serviceIntent.putExtra(getString(R.string.saved_path_directory), editPathFolder.getText().toString());
                 startService(serviceIntent);
-                finish();
+                finishAndRemoveTask();
             }
         };
         Button.OnClickListener btnSaveSettingOnClick = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                finishAndRemoveTask();
             }
         };
 

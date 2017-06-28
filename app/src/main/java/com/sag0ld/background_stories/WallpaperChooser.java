@@ -1,6 +1,7 @@
 package com.sag0ld.background_stories;
 
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -25,10 +26,12 @@ import java.util.Vector;
 
 public class WallpaperChooser extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallpaper_chooser);
+        final Context m_context = this;
 
         final GridView gridPictureFound = (GridView) findViewById(R.id.gridPictureFound);
         Button btnSetWallpaper = (Button) findViewById(R.id.btnSetWallpaperSelected);
@@ -78,9 +81,11 @@ public class WallpaperChooser extends AppCompatActivity {
                 }
 
                 if(pathSelected !=  "") {
-                    Intent intent = wallpaperManager.getCropAndSetWallpaperIntent(
-                            WallpaperFinderIntentService.getImageContentUri(getApplicationContext(), pathSelected));
-                    startActivity(intent);
+                    Intent intent = new Intent(Intent.ACTION_ATTACH_DATA,
+                            WallpaperFinderIntentService.getImageContentUri(m_context,
+                                    pathSelected));
+                    startActivityForResult(intent, 0);
+
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to select one of those picture.",
                                    Toast.LENGTH_LONG).show();
@@ -88,5 +93,15 @@ public class WallpaperChooser extends AppCompatActivity {
 
             }
         });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 0) {
+            // Make sure the request was successful
+            if (resultCode == 0) {
+                finishAndRemoveTask();
+            }
+        }
     }
 }

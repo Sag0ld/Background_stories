@@ -25,5 +25,7 @@
     <string name="saved_path_wallpaper">PathWallpaper</string>
     <string name="saved_path_default_wallpaper">""</string>
     <string name="saved_path_found">PathPictureFound</string>
+    <string name="saved_wallpaper_default_set">DefaultWallpaperSet</string>
+    <string name="saved_wallpaper_default_set_option">No</string>
 
 </resources>

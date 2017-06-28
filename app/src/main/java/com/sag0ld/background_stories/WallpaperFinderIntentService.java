@@ -33,62 +33,92 @@ public class WallpaperFinderIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("Service strat","Service begin");
+        // Get the db
+        SharedPreferences settings = getSharedPreferences
+                (getString(R.string.preference_file_name), MODE_PRIVATE);
+
         // Get the current date
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
         int month = c.get(Calendar.MONTH);
 
-        SharedPreferences settings = getSharedPreferences
-                (getString(R.string.preference_file_name), MODE_PRIVATE);
+        //Get data from the bd
+        String pathDirectory = settings.getString(getString(R.string.saved_path_directory),
+                                                  getString(R.string.saved_path_directory_default));
+        String pathDefaultWallpaper = settings.getString(
+                getString(R.string.saved_path_wallpaper),
+                getString(R.string.saved_path_default_wallpaper));
+        String useDefaultWallpaper = settings.getString(
+                getString(R.string.saved_wallpaper_default_set),
+                getString(R.string.saved_wallpaper_default_set_option));
 
-        Log.d("a","Jour : "+Integer.toString(day) + " Mois : " + Integer.toString(month));
-        //Get data from intent
-        File directoryChoosen = new File (intent.getStringExtra(
-                                                 getString(R.string.saved_path_directory)));
-
+        SharedPreferences.Editor settingsEditor = settings.edit();
         Set<String> pathPictureFounds = new HashSet<String>();
-        for (File f : directoryChoosen.listFiles()) {
-            // Get the date of the file
-            c.setTimeInMillis(f.lastModified());
-            int fileDay = c.get(Calendar.DAY_OF_MONTH);
-            int fileMonth = c.get(Calendar.MONTH);
-            if (f.isFile()) {
-                // if the file is an image with the extension autorized
-                String extension = f.getName().split("\\.")[1];
-                if (day == fileDay && month == fileMonth
-                    && (extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPEG.toString())
-                        || extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPG.toString())
-                        || extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.PNG.toString())))
-                    pathPictureFounds.add(f.getPath());
+        if (pathDirectory != "") {
+            File directoryChoosen = new File(pathDirectory);
+            for (File f : directoryChoosen.listFiles()) {
+                // Get the date of the file
+                c.setTimeInMillis(f.lastModified());
+                int fileDay = c.get(Calendar.DAY_OF_MONTH);
+                int fileMonth = c.get(Calendar.MONTH);
+                if (f.isFile()) {
+                    // if the file is an image with the extension autorized
+                    String extension = f.getName().split("\\.")[1];
+                    if (day == fileDay && month == fileMonth
+                            && (extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPEG.toString())
+                            || extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.JPG.toString())
+                            || extension.equalsIgnoreCase(DirectoryArrayAdapter.imgExtension.PNG.toString())))
+                        pathPictureFounds.add(f.getPath());
+                }
             }
+
+            Log.d("Service number picture", "found " + Integer.toString(pathPictureFounds.size()));
         }
-        Log.d("Service number picture","found " + Integer.toString(pathPictureFounds.size()));
+        if ((useDefaultWallpaper.compareTo("No") == 0 && pathPictureFounds.size() >= 0) ||
+                pathDefaultWallpaper != "") {
 
-        //Close the app and if it's found some picture then call notification
-        String contentTextCustom = "We found a new match!";
-        Intent resultIntent;
-        if(pathPictureFounds.size() != 0) {
+            Uri contentURI = getImageContentUri(this, pathDefaultWallpaper);
+            Intent setWallPaperIntent = new Intent(Intent.ACTION_ATTACH_DATA, contentURI);
+
+            String contentTextCustom = "We found nothing :( But we gonna set your default choose!";
+
             switch (pathPictureFounds.size()) {
-                case 1 :    WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-                            File wallpaperFile = new File(pathPictureFounds.iterator().next());
-                            Uri contentURI = getImageContentUri(this, wallpaperFile.getAbsolutePath());
-                            resultIntent = wallpaperManager.getCropAndSetWallpaperIntent(contentURI);
+                case 0:
                     break;
-                default :   contentTextCustom = "We found some new match!";
+                case 1:
+                    contentTextCustom = "We found a new match!";
 
-                            // Set all the path found in the sharedPref
-                            SharedPreferences.Editor settingsEditor  = settings.edit();
-                            settingsEditor.putStringSet(getString(R.string.saved_path_found),
-                                                        pathPictureFounds);
-                            settingsEditor.commit();
+                    File wallpaperFile = new File(pathPictureFounds.iterator().next());
+                    contentURI = getImageContentUri(this, wallpaperFile.getAbsolutePath());
+                    setWallPaperIntent = new Intent(Intent.ACTION_ATTACH_DATA, contentURI);
 
-                            resultIntent = new Intent(this, WallpaperChooser.class);
+                    // Remove All path who's set in the bd
+                    settingsEditor.remove(getString(R.string.saved_path_found));
+                    settingsEditor.commit();
+
+                    break;
+                // More then one picture founds
+                default:
+                    contentTextCustom = "We found some new match!";
+
+                    // Set all the path found in the sharedPref
+                    settingsEditor.putStringSet(getString(R.string.saved_path_found),
+                            pathPictureFounds);
+                    settingsEditor.commit();
+
+                    setWallPaperIntent = new Intent(this, WallpaperChooser.class);
             }
+            // Set the first time used
+            settingsEditor.putString(getString(R.string.saved_wallpaper_default_set),
+                    "Yes");
+            settingsEditor.commit();
 
+            // Set the notification
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.story_teller_white)
                     .setContentTitle("Wallpaper founds")
-                    .setContentText(contentTextCustom);
+                    .setContentText(contentTextCustom)
+                    .setAutoCancel(true);
 
             // The stack builder object will contain an artificial back stack for the
             // started Activity.
@@ -97,11 +127,18 @@ public class WallpaperFinderIntentService extends IntentService {
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
             // Adds the back stack for the Intent (but not the Intent itself)
             stackBuilder.addParentStack(MainActivity.class);
+
             // Adds the Intent that starts the Activity to the top of the stack
-            stackBuilder.addNextIntent(resultIntent);
+            if(pathPictureFounds.size() > 1) {
+                stackBuilder.addNextIntent(setWallPaperIntent);
+            }
+            else stackBuilder.addNextIntent(Intent.createChooser(setWallPaperIntent,
+                    "Set as:"));
+
             PendingIntent resultPendingIntent =
                     stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentIntent(resultPendingIntent);
+
             NotificationManager mNotificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // mId allows you to update the notification later on.
@@ -134,4 +171,5 @@ public class WallpaperFinderIntentService extends IntentService {
             return null;
         }
     }
+
 }
