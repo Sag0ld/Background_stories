@@ -1,3 +1,5 @@
+*.psd
+StoryTeller.png
 *.iml
 .gradle
 /local.properties
