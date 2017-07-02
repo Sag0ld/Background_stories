@@ -132,9 +132,9 @@ public class SearchView extends Activity {
 
     private void updateListView(Directory p_directory) {
         System.out.println("update view");
-        //clear the old data.
+        // Clear the old data.
         m_DirectoryArrayAdapter.clear();
-        //add the new data.
+        // Add the new data.
         m_DirectoryArrayAdapter.addAll(p_directory.getFiles());
     }
 

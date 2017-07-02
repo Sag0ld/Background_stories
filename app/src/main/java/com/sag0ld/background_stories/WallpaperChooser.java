@@ -4,11 +4,6 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.PaintDrawable;
-import android.media.ThumbnailUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,16 +11,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 public class WallpaperChooser extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +57,10 @@ public class WallpaperChooser extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Get the path of the new wallpaper
-                WallpaperManager wallpaperManager =
-                        WallpaperManager.getInstance(getApplicationContext());
-
                 Iterator<String> it = pathsFound.iterator();
                 String pathSelected = "";
                 int positionChild = 0;
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     ImageView child = (ImageView) gridPictureFound.getChildAt(positionChild);
                     if(child.getContentDescription() == "Selected")
                         pathSelected = it.next();
@@ -80,7 +69,7 @@ public class WallpaperChooser extends AppCompatActivity {
                     ++positionChild;
                 }
 
-                if(pathSelected !=  "") {
+                if (pathSelected !=  "") {
                     Intent intent = new Intent(Intent.ACTION_ATTACH_DATA,
                             WallpaperFinderIntentService.getImageContentUri(m_context,
                                     pathSelected));

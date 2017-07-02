@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         settings = getSharedPreferences(getString(R.string.preference_file_name), MODE_PRIVATE);
 
         // Initialize if we already use this app before
-        if(!settings.contains(getString(R.string.saved_wallpaper_default_set))) {
+        if (!settings.contains(getString(R.string.saved_wallpaper_default_set))) {
             SharedPreferences.Editor settingsEditor = settings.edit();
             settingsEditor.putString(getString(R.string.saved_wallpaper_default_set),
                     getString(R.string.saved_wallpaper_default_set_option));
@@ -100,19 +100,21 @@ public class MainActivity extends Activity {
         btnSetWallpaper.setOnClickListener(btnSetWallpaperOnClick);
         btnSave.setOnClickListener(btnSaveSettingOnClick);
 
-        //Initialize the Alarm for the recurency to find a new wallpaper
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this, WallpaperFinderIntentService.class);
-        PendingIntent alarmIntent = PendingIntent.getService
-                (MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        // Set the broadcast to run the service
+        Intent intent = new Intent(this, AlertReceiver.class);
+        intent.setAction("com.sag0ld.background_stories.START_WALLPAPERSERVICE");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                MainActivity.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         // Set the alarm to start at midnight
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 22);
-        calendar.set(Calendar.MINUTE, 16);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+                AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     @Override

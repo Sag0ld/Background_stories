@@ -8,20 +8,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-
-/**
- * Created by Sagold on 2017-01-08.
- */
-
 public class Directory {
 
     private File m_currentDirectory;
-    private File m_previousDirectory;
     private Stack<File> m_history;
     private Boolean isAccessible;
 
     public Directory () {
         m_history = new Stack<>();
+
         //if the storage device is writable and readable, set the current directory to the external storage location.
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             m_currentDirectory = Environment.getExternalStorageDirectory();
@@ -61,8 +56,11 @@ public class Directory {
                         tmpCurrentDirectoryPath.lastIndexOf('/'));
             }
             while (!tmpCurrentDirectoryPath.equals(Environment.getExternalStorageDirectory().getAbsolutePath()));
+
+            // Reverse the order of previous directory to fit our current one
             Collections.reverse(previousDirectory);
 
+            // Set all previous directory founds
             for (File directory : previousDirectory) {
                 setPreviousDirectory(m_currentDirectory);
                 setCurrentDirectory(directory);
@@ -76,7 +74,6 @@ public class Directory {
 
     public void setPreviousDirectory (File p_previousDirectory) {
         m_history.add(p_previousDirectory);
-        m_previousDirectory = p_previousDirectory;
     }
     public List<File> getFiles() {
 

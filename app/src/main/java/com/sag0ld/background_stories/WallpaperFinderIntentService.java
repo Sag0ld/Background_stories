@@ -3,7 +3,6 @@ package com.sag0ld.background_stories;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +18,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
-
-/**
- * Created by Sagold on 2017-01-15.
- */
 
 public class WallpaperFinderIntentService extends IntentService {
 
@@ -42,7 +37,7 @@ public class WallpaperFinderIntentService extends IntentService {
         int day = c.get(Calendar.DAY_OF_MONTH);
         int month = c.get(Calendar.MONTH);
 
-        //Get data from the bd
+        // Get data from the bd
         String pathDirectory = settings.getString(getString(R.string.saved_path_directory),
                                                   getString(R.string.saved_path_directory_default));
         String pathDefaultWallpaper = settings.getString(
@@ -53,7 +48,7 @@ public class WallpaperFinderIntentService extends IntentService {
                 getString(R.string.saved_wallpaper_default_set_option));
 
         SharedPreferences.Editor settingsEditor = settings.edit();
-        Set<String> pathPictureFounds = new HashSet<String>();
+        Set<String> pathPictureFounds = new HashSet<>();
         if (pathDirectory != "") {
             File directoryChoosen = new File(pathDirectory);
             for (File f : directoryChoosen.listFiles()) {
@@ -129,9 +124,8 @@ public class WallpaperFinderIntentService extends IntentService {
             stackBuilder.addParentStack(MainActivity.class);
 
             // Adds the Intent that starts the Activity to the top of the stack
-            if(pathPictureFounds.size() > 1) {
+            if (pathPictureFounds.size() > 1)
                 stackBuilder.addNextIntent(setWallPaperIntent);
-            }
             else stackBuilder.addNextIntent(Intent.createChooser(setWallPaperIntent,
                     "Set as:"));
 
